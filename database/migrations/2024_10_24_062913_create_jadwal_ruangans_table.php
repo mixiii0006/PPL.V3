@@ -15,13 +15,9 @@ return new class extends Migration
             $table->id(); // Primary key
             $table->foreignId('pemetaan_id')->constrained('pemetaans')->cascadeOnDelete(); // FK ke pemetaans
             $table->foreignId('ruangan_id')->constrained('ruangans')->cascadeOnDelete(); // FK ke ruangans
-            $table->time('jam_masuk'); // Waktu masuk
-            $table->time('jam_keluar'); // Waktu keluar
-            $table->string('hari', 10); // Hari (contoh: Senin, Selasa, dst)
-            $table->integer('jumlah_mahasiswa')->nullable();
             $table->timestamps(); // created_at dan updated_at
 
-            $table->unique(['pemetaan_id', 'ruangan_id', 'hari', 'jam_masuk'], 'jadwal_ruangan_unique');
+            $table->unique(['pemetaan_id', 'ruangan_id'], 'jadwal_ruangan_unique');
         });
     }
 

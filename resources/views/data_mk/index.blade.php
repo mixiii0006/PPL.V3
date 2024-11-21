@@ -36,8 +36,7 @@
                                 <th scope="col" class="px-4 py-3">NO</th>
                                 <th scope="col" class="px-4 py-3">Mata Kuliah</th>
                                 <th scope="col" class="px-4 py-3">Tingkat</th>
-                                <th scope="col" class="px-4 py-3">Tanggal Mulai</th>
-                                <th scope="col" class="px-4 py-3">Tanggal Selesai</th>
+
 
 
                                 <th scope="col" class="px-4 py-3">
@@ -51,8 +50,7 @@
                                 <td class="px-4 py-3">{{ $data->id}}</td>
                                 <td class="px-4 py-3">{{ $data->nama_matakuliah}}</td>
                                 <td class="px-4 py-3">{{ $data->tingkat}}</td>
-                                <td class="px-4 py-3">{{ $data->tanggal_mulai}}</td>
-                                <td class="px-4 py-3">{{ $data->tanggal_selesai}}</td>
+
                                 <td class="px-4 py-3 flex items-center justify-end">
                                     <button id="{{$data->id}}-dropdown-button" data-dropdown-toggle="{{$data->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -105,14 +103,7 @@
                                                         <label for="tingkat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tingkat</label>
                                                         <input type="text" name="tingkat" id="tangkat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tingkat', $data->tingkat) }}" required="">
                                                     </div>
-                                                    <div>
-                                                        <label for="tanggal_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
-                                                        <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_mulai', $data->tanggal_mulai) }}" required="">
-                                                    </div>
-                                                    <div>
-                                                        <label for="tanggal_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
-                                                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_selesai', $data->tanggal_selesai) }}" required="">
-                                                    </div>
+
                                                 </div>
                                                 <div class="flex items-center space-x-4">
                                                     <button id='{{$data->id}}-update' type="submit" class="text-blue-500 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-8 py-2.5 text-center border border-blue-500 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -163,16 +154,9 @@
                                     </div>
                                     <div>
                                         <label for="tingkat" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tingkat</label>
-                                        <input type="text" name="tingkat" id="tingkat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
+                                        <input type="number" name="tingkat" id="tingkat" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
                                     </div>
-                                    <div>
-                                        <label for="tanggal_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
-                                        <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
-                                    </div>
-                                    <div>
-                                        <label for="tanggal_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
-                                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
-                                    </div>
+
                                 </div>
 
                             </div>

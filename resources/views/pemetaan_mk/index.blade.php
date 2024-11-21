@@ -34,8 +34,12 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">NO</th>
+                                <th scope="col" class="px-4 py-3">Modul</th>
                                 <th scope="col" class="px-4 py-3">Mata Kuliah</th>
                                 <th scope="col" class="px-4 py-3">Dosen</th>
+                                <th scope="col" class="px-4 py-3">Hari</th>
+                                <th scope="col" class="px-4 py-3">Jam Mulai</th>
+                                <th scope="col" class="px-4 py-3">Jam Selesai</th>
                                 <th scope="col" class="px-4 py-3">Tanggal Mulai</th>
                                 <th scope="col" class="px-4 py-3">Tanggal Selesai</th>
 
@@ -49,8 +53,12 @@
                             @foreach ($datas as $data)
                             <tr class="border-b dark:border-gray-700">
                                 <td class="px-4 py-3">{{ $data->id}}</td>
+                                <td class="px-4 py-3">{{ $data->nama_modul}}</td>
                                 <td class="px-4 py-3">{{ $data->mata_kuliah->nama_matakuliah ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $data->dosen->Nama ?? 'N/A' }}</td>
+                                <td class="px-4 py-3">{{ $data->hari}}</td>
+                                <td class="px-4 py-3">{{ $data->jam_mulai}}</td>
+                                <td class="px-4 py-3">{{ $data->jam_selesai}}</td>
                                 <td class="px-4 py-3">{{ $data->tanggal_mulai}}</td>
                                 <td class="px-4 py-3">{{ $data->tanggal_selesai}}</td>
                                 <td class="px-4 py-3 flex items-center justify-end">
@@ -97,6 +105,10 @@
                                                 @method('PUT')
 
                                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
+                                                    <div>
+                                                        <label for="nama_modul-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Modul</label>
+                                                        <input type="text" name="nama_modul" id="nama_modul-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('nama_modul', $data->nama_modul) }}" required="">
+                                                    </div>
                                                     <label for="nama_matakuliah-{{$data->id}}" class="block  text-sm font-medium text-gray-900 dark:text-white">Mata Kuliah</label>
                                                     <select name="matakuliah_id" id="nama_matakuliah-{{$data->id}}" class="js-example-basic-single bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" name="state"  >
                                                         <option value="{{  $data->id }}">{{ old('nama_matakuliah', $data->mata_kuliah->nama_matakuliah) }}</option>
@@ -111,14 +123,78 @@
                                                             <option value="{{  $item->id }}">{{ old('Nama', $item->Nama) }}</option>
                                                         @endforeach
                                                     </select>
+                                                    <div class="grid grid-cols-3 gap-4">
+                                                        <!-- Hari -->
+                                                        <div>
+                                                            <label for="hari-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hari</label>
+                                                            <select id="hari-{{$data->id}}" name="hari" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                                                <option value="{{  $data->hari }}">{{ old('hari', $data->hari) }}</option>
+                                                                <option value="Senin">Senin</option>
+                                                                <option value="Selasa">Selasa</option>
+                                                                <option value="Rabu">Rabu</option>
+                                                                <option value="Kamis">Kamis</option>
+                                                                <option value="Jumat">Jumat</option>
+                                                            </select>
+                                                        </div>
+
+                                                        <!-- Jam Mulai -->
+                                                        <div>
+                                                            <label for="jam_mulai-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jam Mulai</label>
+                                                            <div class="relative">
+                                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd" />
+                                                                    </svg>
+                                                                </div>
+                                                                <input type="time" id="jam_mulai-{{$data->id}}" name="jam_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="07:00" max="18:00" value="{{ old('jam_mulai', $data->jam_mulai) }}" required />
+                                                            </div>
+                                                        </div>
+
+                                                        <!-- Jam Selesai -->
+                                                        <div>
+                                                            <label for="jam_selesai-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jam Selesai</label>
+                                                            <div class="relative">
+                                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd" />
+                                                                    </svg>
+                                                                </div>
+                                                                <input type="time" id="jam_selesai-{{$data->id}}" name="jam_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="07:00" max="18:00" value="{{ old('jam_selesai', $data->jam_selesai) }}" required />
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="grid grid-cols-2 gap-4">
+                                                        <!-- Tanggal Mulai -->
+                                                        <div>
+                                                            <label for="tanggal_mulai-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
+                                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_mulai', $data->tanggal_mulai) }}" required>
+                                                        </div>
+
+                                                        <!-- Tanggal Selesai -->
+                                                        <div>
+                                                            <label for="tanggal_selesai-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
+                                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_selesai', $data->tanggal_selesai) }}" required>
+                                                        </div>
+                                                    </div>
+
+                                                    <div class="grid grid-cols-2 gap-4">
                                                     <div>
-                                                        <label for="tanggal_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
-                                                        <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_mulai', $data->tanggal_mulai) }}" required="">
+                                                        <label for="jenis_ruangan-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hari</label>
+                                                        <select id="jenis_ruangan-{{$data->id}}" name="jenis_ruangan" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                                            <option value="{{  $data->jenis_ruangan }}">{{ old('jenis_ruangan', $data->jenis_ruangan) }}</option>
+                                                            <option value="RK">Ruang Kuliah</option>
+                                                            <option value="RD">Ruang Diskusi</option>
+                                                            <option value="Seminar">Ruang Seminar</option>
+                                                        </select>
                                                     </div>
                                                     <div>
-                                                        <label for="tanggal_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
-                                                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('tanggal_selesai', $data->tanggal_selesai) }}" required="">
+                                                        <label for="jumlah_mahasiswa-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
+                                                        <input type="text" name="jumlah_mahasiswa" id="jumlah_mahasiswa-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('jumlah_mahasiswa', $data->jumlah_mahasiswa) }}" required="">
                                                     </div>
+                                                    </div>
+
+
                                                 </div>
                                                 <div class="flex items-center space-x-4">
                                                     <button id='{{$data->id}}-update' type="submit" class="text-blue-500 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-8 py-2.5 text-center border border-blue-500 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -163,6 +239,10 @@
                             @csrf
                             <div class="grid gap-4">
                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
+                                    <div>
+                                        <label for="nama_modul" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Modul</label>
+                                        <input type="text" name="nama_modul" id="nama_modul" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
+                                    </div>
 
                                     <label for="nama_matakuliah" class="block  text-sm font-medium text-gray-900 dark:text-white">Mata Kuliah</label>
                                     <select name="matakuliah_id" id="nama_matakuliah" class="js-example-basic-single bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" name="states" multiple="multiple">
@@ -177,14 +257,90 @@
                                         @endforeach
                                     </select>
 
-                                    <div>
-                                        <label for="tanggal_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
-                                        <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
+                                    <div class="grid grid-cols-3 gap-4">
+                                        <!-- Hari -->
+                                        <div>
+                                            <label for="hari" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Hari</label>
+                                            <select id="hari" name="hari" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                                <option value="">Pilih Hari</option>
+                                                <option value="Senin">Senin</option>
+                                                <option value="Selasa">Selasa</option>
+                                                <option value="Rabu">Rabu</option>
+                                                <option value="Kamis">Kamis</option>
+                                                <option value="Jumat">Jumat</option>
+                                            </select>
+                                        </div>
+
+                                        <!-- Jam Mulai -->
+                                        <div>
+                                            <label for="jam_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jam Mulai</label>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                                <input type="time" id="jam_mulai" name="jam_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="07:00" max="18:00" value="07:00" required />
+                                            </div>
+                                        </div>
+
+                                        <!-- Jam Selesai -->
+                                        <div>
+                                            <label for="jam_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jam Selesai</label>
+                                            <div class="relative">
+                                                <div class="absolute inset-y-0 end-0 top-0 flex items-center pe-3.5 pointer-events-none">
+                                                    <svg class="w-4 h-4 text-gray-500 dark:text-gray-400" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" fill="currentColor" viewBox="0 0 24 24">
+                                                        <path fill-rule="evenodd" d="M2 12C2 6.477 6.477 2 12 2s10 4.477 10 10-4.477 10-10 10S2 17.523 2 12Zm11-4a1 1 0 1 0-2 0v4a1 1 0 0 0 .293.707l3 3a1 1 0 0 0 1.414-1.414L13 11.586V8Z" clip-rule="evenodd" />
+                                                    </svg>
+                                                </div>
+                                                <input type="time" id="jam_selesai" name="jam_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" min="07:00" max="18:00" value="10:00" required />
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div>
-                                        <label for="tanggal_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
-                                        <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
+
+                                    <div class="grid grid-cols-2 gap-4">
+                                        <!-- Tanggal Mulai -->
+                                        <div>
+                                            <label for="tanggal_mulai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Mulai</label>
+                                            <input type="date" name="tanggal_mulai" id="tanggal_mulai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required>
+                                        </div>
+
+                                        <!-- Tanggal Selesai -->
+                                        <div>
+                                            <label for="tanggal_selesai" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Tanggal Selesai</label>
+                                            <input type="date" name="tanggal_selesai" id="tanggal_selesai" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required>
+                                        </div>
                                     </div>
+
+                                    <label for="jenis_ruangan" class="block text-sm font-medium text-gray-900 dark:text-white">Jenis Ruangan</label>
+                                    <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
+                                        <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                                            <div class="flex items-center ps-3">
+                                                <input id="jenis_ruangan_rk" type="radio" name="jenis_ruangan" value="RK" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                <label for="jenis_ruangan_rk" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Ruang Kuliah</label>
+                                            </div>
+                                        </li>
+                                        <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
+                                            <div class="flex items-center ps-3">
+                                                <input id="jenis_ruangan_rd" type="radio" name="jenis_ruangan" value="RD" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                <label for="jenis_ruangan_rd" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Ruang Diskusi</label>
+                                            </div>
+                                        </li>
+                                        <li class="w-full dark:border-gray-600">
+                                            <div class="flex items-center ps-3">
+                                                <input id="jenis_ruangan_seminar" type="radio" name="jenis_ruangan" value="Seminar" class="w-4 h-4 text-blue-600 bg-gray-100 border-gray-300 rounded focus:ring-blue-500 dark:focus:ring-blue-600 dark:ring-offset-gray-700 dark:focus:ring-offset-gray-700 focus:ring-2 dark:bg-gray-600 dark:border-gray-500">
+                                                <label for="jenis_ruangan_seminar" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Ruang Seminar</label>
+                                            </div>
+                                        </li>
+                                    </ul>
+
+
+                                    <!-- Input Jumlah Mahasiswa (Hanya untuk RD) -->
+                                    <div id="jumlah_mahasiswa_field" style="display: none;">
+                                        <label for="jumlah_mahasiswa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
+                                        <input type="number" id="jumlah_mahasiswa" name="jumlah_mahasiswa"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
+                                    </div>
+
                                 </div>
                             </div>
                             <button type="submit" class="flex text-blue-500 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:outline-none focus:ring-primary-300 font-medium rounded-lg text-sm px-8  py-2.5 text-center border border-blue-500 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
@@ -291,6 +447,29 @@
 
                 });
 
+
+                const rdRadio = document.getElementById('jenis_ruangan_rd');
+                const rkRadio = document.getElementById('jenis_ruangan_rk');
+                const seminarRadio = document.getElementById('jenis_ruangan_seminar'); // Correct ID here
+                const jumlahMahasiswaField = document.getElementById('jumlah_mahasiswa_field');
+
+                function toggleJumlahMahasiswa() {
+                    // If RD (Ruang Diskusi) is selected, show the jumlah mahasiswa field
+                    if (rdRadio.checked) {
+                        jumlahMahasiswaField.style.display = 'block';
+                    } else {
+                        // Otherwise, hide the jumlah mahasiswa field
+                        jumlahMahasiswaField.style.display = 'none';
+                    }
+                }
+
+                // Event listeners to trigger the visibility toggle when any radio button changes
+                rdRadio.addEventListener('change', toggleJumlahMahasiswa);
+                rkRadio.addEventListener('change', toggleJumlahMahasiswa);
+                seminarRadio.addEventListener('change', toggleJumlahMahasiswa);
+
+                // Call the function initially to set the correct state on page load
+                toggleJumlahMahasiswa();
 
 
 

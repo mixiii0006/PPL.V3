@@ -15,7 +15,6 @@ return new class extends Migration
             $table->id(); // Primary key with auto-increment
             $table->string('nama_matakuliah', 100); // Nama mata kuliah
             $table->integer('tingkat'); // Tingkat (contoh: 1, 2, 3, dst.)
-             
             $table->timestamps(); // created_at dan updated_at
         });
     }

@@ -37,7 +37,7 @@
                                 <th scope="col" class="px-4 py-3">Ruanggan</th>
                                 <th scope="col" class="px-4 py-3">Kapasitas</th>
                                 <th scope="col" class="px-4 py-3">Fasilitas</th>
-
+                                <th scope="col" class="px-4 py-3">Jenis Ruangan</th>
 
                                 <th scope="col" class="px-4 py-3">
                                     <span class="sr-only">Actions</span>
@@ -51,6 +51,7 @@
                                 <td class="px-4 py-3">{{ $data->nama_ruangan}}</td>
                                 <td class="px-4 py-3">{{ $data->kapasitas}}</td>
                                 <td class="px-4 py-3">{{ $data->fasilitas}}</td>
+                                <td class="px-4 py-3">{{ $data->jenis_ruangan}}</td>
                                 <td class="px-4 py-3 flex items-center justify-end">
                                     <button id="{{$data->id}}-dropdown-button" data-dropdown-toggle="{{$data->id}}-dropdown" class="inline-flex items-center p-0.5 text-sm font-medium text-center text-gray-500 hover:text-gray-800 rounded-lg focus:outline-none dark:text-gray-400 dark:hover:text-gray-100" type="button">
                                         <svg class="w-5 h-5" aria-hidden="true" fill="currentColor" viewbox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
@@ -107,6 +108,14 @@
                                                         <label for="fasilitas" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Fasilitas</label>
                                                         <input type="text" name="fasilitas" id="fasilitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('fasilitas', $data->fasilitas) }}" required="">
                                                     </div>
+                                                    <label for="jenis_ruangan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Ruangan</label>
+                                                    <select id="jenis_ruangan" name="jenis_ruangan" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                                        <option value="{{ old('fasilitas', $data->jenis_ruangan) }}">{{ old('fasilitas', $data->jenis_ruangan) }}</option>
+                                                        <option value="RK">Ruang Kuliah</option>
+                                                        <option value="RD">Ruang Diskusi</option>
+                                                        <option value="Seminar">Ruang Seminar</option>
+                                                    </select>
+                                                </div>
 
                                                 </div>
                                                 <div class="flex items-center space-x-4">
@@ -163,6 +172,15 @@
                                     <div>
                                         <label for="fasilitas" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white"> Fasilitas</label>
                                         <input type="text" name="fasilitas" id="fasilitas" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
+                                    </div>
+                                    <div>
+                                        <label for="jenis_ruangan" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jenis Ruangan</label>
+                                        <select id="jenis_ruangan" name="jenis_ruangan" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500" required>
+                                            <option value="">Pilih Ruangan</option>
+                                            <option value="RK">Ruang Kuliah</option>
+                                            <option value="RD">Ruang Diskusi</option>
+                                            <option value="Seminar">Ruang Seminar</option>
+                                        </select>
                                     </div>
                                 </div>
 

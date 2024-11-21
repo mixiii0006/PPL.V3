@@ -48,7 +48,7 @@
             </div>
 
             <div class="flex items-center space-x-4">
-            @auth
+            {{-- @auth
             @if(Auth::user()->role=='admin'|| Auth::user()->role == 'operator')
               <button id="defaultModalButton"   data-modal-target="defaultModal"data-modal-toggle="defaultModal" type="button" class="flex w-full items-center justify-center rounded-lg border  border-blue-500 bg-white px-3 py-2 text-sm font-medium text-blue-500 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-blue focus:ring-4 focus:ring-blue-100 dark:border-blue-500 dark:bg-gray-800 dark:text-blue-500 dark:hover:bg-gray-700 dark:hover:text-blue dark:focus:ring-blue-00 sm:w-auto">
                 <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
@@ -60,7 +60,7 @@
                 </svg>
               </button>
             @endif
-            @endauth
+            @endauth --}}
               <button data-modal-toggle="filterModal" data-modal-target="filterModal" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">
                 <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z" />
@@ -72,6 +72,8 @@
               </button>
             </div>
           </div>
+
+
 
           <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
             @foreach ($datas as $data)
@@ -87,6 +89,11 @@
                         <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->ruangan->nama_ruangan }}</td>
                     </tr>
                     <tr>
+                        <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Modul</a></td>
+                        <td class="pr-2">:</td>
+                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->nama_modul}}</td>
+                    </tr>
+                    <tr>
                         <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Matakuliah</a></td>
                         <td class="pr-2">:</td>
                         <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->mata_kuliah->nama_matakuliah }}</td>
@@ -97,25 +104,25 @@
                         <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->dosen->Nama }}</td>
                     </tr>
                     <tr>
-                        <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jam Masuk</a></td>
+                        <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jam</a></td>
                         <td class="pr-2">:</td>
-                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->jam_masuk }}</td>
+                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jam_mulai }} s.d. {{ $data->pemetaan->jam_selesai }}</td>
                     </tr>
-                    <tr>
+                    {{-- <tr>
                         <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jam Keluar</a></td>
                         <td class="pr-2">:</td>
-                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->jam_keluar }}</td>
-                    </tr>
+                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jam_selesai }}</td>
+                    </tr> --}}
                     <tr>
                         <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Hari</a></td>
                         <td class="pr-2">:</td>
-                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->hari }}</td>
+                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->hari }}</td>
                     </tr>
                 </table>
 
                 <div class="mt-4 flex items-center justify-between gap-4">
-                    @auth
-                    @if(Auth::user()->role=='admin'|| Auth::user()->role == 'operator')
+                @auth
+                @if(Auth::user()->role=='admin'|| Auth::user()->role == 'operator')
                    <div class="flex items-center justify-end gap-1">
                     <button id='{{$data->id}}-editButton' data-modal-target="{{$data->id}}-updateProductModal" data-modal-toggle="{{$data->id}}-updateProductModal"  type="button" data-tooltip-target="tooltip-quick-look" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
                       <span class="sr-only"> Edit </span>
@@ -243,6 +250,11 @@
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->ruangan->nama_ruangan }}</td>
                                         </tr>
                                         <tr>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Modul</a></td>
+                                            <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
+                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->nama_modul }}</td>
+                                        </tr>
+                                        <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Matakuliah</a></td>
                                             <td class="pr-2">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->mata_kuliah->nama_matakuliah }}</td>
@@ -260,12 +272,12 @@
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jam</a></td>
                                             <td class="pr-2">:</td>
-                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->jam_masuk }} s.d. {{ $data->jam_keluar }}</td>
+                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jam_mulai }} s.d. {{ $data->pemetaan->jam_selesai }}</td>
                                         </tr>
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Hari</a></td>
                                             <td class="pr-2">:</td>
-                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->hari }}</td>
+                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->hari }}</td>
                                         </tr>
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Kapasitas Ruangan</a></td>

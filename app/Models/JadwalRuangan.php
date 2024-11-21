@@ -14,9 +14,6 @@ class JadwalRuangan extends Model
     protected $fillable = [
         'pemetaan_id',
         'ruangan_id',
-        'jam_masuk',
-        'jam_keluar',
-        'hari'
     ];
     protected $table = 'jadwal_ruangans';
 
@@ -29,4 +26,6 @@ class JadwalRuangan extends Model
     {
         return $this->belongsTo(Ruangan::class, 'ruangan_id');
     }
+
+
 }
