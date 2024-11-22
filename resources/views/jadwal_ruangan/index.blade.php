@@ -44,6 +44,8 @@
                         </a>
                     @endforeach
                   </div>
+
+
               </div>
             </div>
 
@@ -61,6 +63,8 @@
               </button>
             @endif
             @endauth --}}
+
+
               <button data-modal-toggle="filterModal" data-modal-target="filterModal" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">
                 <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
                   <path stroke="currentColor" stroke-linecap="round" stroke-width="2" d="M18.796 4H5.204a1 1 0 0 0-.753 1.659l5.302 6.058a1 1 0 0 1 .247.659v4.874a.5.5 0 0 0 .2.4l3 2.25a.5.5 0 0 0 .8-.4v-7.124a1 1 0 0 1 .247-.659l5.302-6.059c.566-.646.106-1.658-.753-1.658Z" />
@@ -77,12 +81,15 @@
 
           <div class="mb-4 grid grid-cols-1 gap-4 sm:grid-cols-2 md:mb-8 lg:grid-cols-3 xl:grid-cols-4">
             @foreach ($datas as $data)
-            <div class="">
-              <div class="rounded-lg border border-gray-200 bg-white p-6 shadow-lg shadow-gray-500/50 dark:border-gray-700 dark:bg-gray-800">
+            <div class="h-full  flex flex-col">
+              <div class=" flex flex-col rounded-lg border border-gray-200 bg-white p-6 shadow-lg shadow-gray-500/50 dark:border-gray-700 dark:bg-gray-800 h-full ">
                 <div class="text-center mb-4">
                     <a href="#" class="text-lg font-bold text-blue-500 leading-tight">Jadwal</a>
                 </div>
-                <table>
+
+                <div class="w-[200px] h-[200px] mx-auto ">
+                {{-- <div class="w-auto h-auto mx-auto"> --}}
+                <table class="table-auto w-full text-left">
                     <tr>
                         <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Ruangan</a></td>
                         <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
@@ -119,9 +126,10 @@
                         <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->hari }}</td>
                     </tr>
                 </table>
+                </div>
 
-                <div class="mt-4 flex items-center justify-between gap-4">
-                @auth
+                <div class="mt-3 flex items-center justify-end gap-4">
+                {{-- @auth
                 @if(Auth::user()->role=='admin'|| Auth::user()->role == 'operator')
                    <div class="flex items-center justify-end gap-1">
                     <button id='{{$data->id}}-editButton' data-modal-target="{{$data->id}}-updateProductModal" data-modal-toggle="{{$data->id}}-updateProductModal"  type="button" data-tooltip-target="tooltip-quick-look" class="rounded-lg p-2 text-gray-500 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white">
@@ -147,7 +155,7 @@
                     </div>
                   </div>
                 @endif
-                @endauth
+                @endauth --}}
 
                   <button type="button" id="{{$data->id}}-readProductButton" data-modal-target="{{$data->id}}-readProductModal" data-modal-toggle="{{$data->id}}-readProductModal" class="inline-flex items-center  border border-blue-500 rounded-lg bg-primary-700 px-5 py-2.5 text-sm font-medium text-blue-500 hover:bg-primary-800 focus:outline-none focus:ring-4  focus:ring-primary-300 dark:bg-primary-600 dark:hover:bg-primary-700 dark:focus:ring-primary-800">
                     Detail
@@ -433,26 +441,38 @@
                   </div>
                   <div id="myTabContent">
                     <div class="grid grid-cols-2 gap-4 md:grid-cols-3" id="brand" role="tabpanel" aria-labelledby="brand-tab">
-                      <div class="space-y-2">
-                        <h5 class="text-sm font-medium uppercase text-black dark:text-white">RK</h5>
+
+                      <div class="space-y-2 ">
+                        <h5 class="text-sm font-medium uppercase text-blue-500  ">RD</h5>
                         @foreach ($ruangan as $data)
-                            @if (str_starts_with($data->nama_ruangan, 'RK'))
-                                <div class="flex items-center">
-                                    <input id="checkbbox_{{ $data->id }}" type="checkbox" name="ruangan_ids[]" value="{{ $data->id }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
-                                    <label for="checkbbox_{{ $data->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
-                                        {{ $data->nama_ruangan }}
-                                    </label>
-                                </div>
-                            @endif
+                        @if (str_starts_with($data->nama_ruangan, 'RD') && intval(substr($data->nama_ruangan, 2)) <= 9)
+                            <div class="flex items-center">
+                            <input id="checkbbox_{{ $data->id }}" type="checkbox" name="ruangan_ids[]" value="{{ $data->id }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
+                            <label for="checkbbox_{{ $data->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                {{ $data->nama_ruangan }}
+                            </label>
+                            </div>
+                        @endif
                         @endforeach
                       </div>
-
-                      <div class="space-y-2">
-                        <h5 class="text-sm font-medium uppercase text-black dark:text-white">RD</h5>
-
+                    <div class="space-y-2">
+                        <h5 class="text-sm font-medium uppercase text-blue-500  ">RD</h5>
                         @foreach ($ruangan as $data)
-                            @if (str_starts_with($data->nama_ruangan, 'RD'))
-                                <div class="flex items-center">
+                          @if (str_starts_with($data->nama_ruangan, 'RD') && intval(substr($data->nama_ruangan, 2)) > 9)
+                            <div class="flex items-center">
+                              <input id="checkbbox_{{ $data->id }}" type="checkbox" name="ruangan_ids[]" value="{{ $data->id }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
+                              <label for="checkbbox_{{ $data->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                {{ $data->nama_ruangan }}
+                              </label>
+                            </div>
+                          @endif
+                        @endforeach
+                      </div>
+                      <div class="space-y-2">
+                        <h5 class="text-sm font-medium uppercase text-blue-500 ">RK</h5>
+                        @foreach ($ruangan as $data)
+                            @if (str_starts_with($data->nama_ruangan, 'RK'))
+                                <div class="flex items-center ">
                                     <input id="checkbbox_{{ $data->id }}" type="checkbox" name="ruangan_ids[]" value="{{ $data->id }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
                                     <label for="checkbbox_{{ $data->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
                                         {{ $data->nama_ruangan }}
@@ -461,9 +481,7 @@
                             @endif
                         @endforeach
 
-                    </div>
-                    <div class="space-y-2">
-                        <h5 class="text-sm font-medium uppercase text-black dark:text-white">Seminar</h5>
+                        <h5 class="text-sm font-medium uppercase text-blue-500  mt-8">Seminar</h5>
 
                         @foreach ($ruangan as $data)
                             @if (str_starts_with($data->nama_ruangan, 'Seminar'))
@@ -476,7 +494,7 @@
                             @endif
                         @endforeach
                       </div>
-                      <div class="mb-4">
+                      {{-- <div class="mb-4">
                         <label for="hari" class="text-sm font-medium text-gray-900 dark:text-gray-300">Pilih Hari:</label>
                         <select name="hari" id="hari" class="w-full mt-2 px-4 py-2 border border-gray-300 rounded">
                             <option value="">Semua Hari</option>
@@ -484,8 +502,10 @@
                                 <option value="{{ $day }}">{{ $day }}</option>
                             @endforeach
                         </select>
-                    </div>
+                    </div> --}}
                 </div>
+
+
 
                 <button type="submit" class="rounded-lg border  mt-6 mb-6  border-blue-500 bg-primary-700 px-5 py-2.5 text-center text-sm font-medium text-blue-500 dark:text-white hover:bg-primary-800 focus:outline-none focus:ring-4 focus:ring-primary-300 dark:bg-primary-700 dark:hover:bg-primary-800 dark:focus:ring-primary-800">Filter</button>
 

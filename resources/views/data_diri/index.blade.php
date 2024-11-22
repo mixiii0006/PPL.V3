@@ -39,7 +39,7 @@
                         <tbody id="data-container">
                             @foreach ($datas as $data)
                             <tr class="border-b dark:border-gray-700">
-                                <td class="px-4 py-3">{{ $data->id}}</td>
+                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-3">{{ $data->name}}</td>
                                 <td class="px-4 py-3">{{ $data->email}}</td>
                                 <td class="px-4 py-3">{{ $data->role}}</td>

@@ -46,7 +46,7 @@
                     <tbody id="data-container">
                         @foreach ($datas as $data)
                         <tr class="border-b dark:border-gray-700">
-                            <td class="px-4 py-3">{{ $data->id}}</td>
+                            <td class="px-4 py-3">{{ $loop->iteration }}</td>
                             <td class="px-4 py-3">{{ $data->NIP}}</td>
                             <td class="px-4 py-3">{{ $data->Nama}}</td>
                             <td class="px-4 py-3 flex items-center justify-end">

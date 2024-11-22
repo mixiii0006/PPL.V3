@@ -25,8 +25,10 @@ class JadwalRuanganController extends Controller
         // Ambil seluruh data ruangan
         $ruangan = Ruangan::all();
 
+
+
         // Kembalikan view dengan data yang dibutuhkan
-        return view('jadwal_ruangan.index', compact('datas', 'pemetaan', 'ruangan'));
+        return view('jadwal_ruangan.index', compact('datas', 'pemetaan', 'ruangan',));
 
 
     }

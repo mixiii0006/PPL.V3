@@ -52,7 +52,7 @@
                         <tbody id="data-container">
                             @foreach ($datas as $data)
                             <tr class="border-b dark:border-gray-700">
-                                <td class="px-4 py-3">{{ $data->id}}</td>
+                                <td class="px-4 py-3">{{ $loop->iteration }}</td>
                                 <td class="px-4 py-3">{{ $data->nama_modul}}</td>
                                 <td class="px-4 py-3">{{ $data->mata_kuliah->nama_matakuliah ?? 'N/A' }}</td>
                                 <td class="px-4 py-3">{{ $data->dosen->Nama ?? 'N/A' }}</td>
@@ -164,6 +164,7 @@
                                                         </div>
                                                     </div>
 
+
                                                     <div class="grid grid-cols-2 gap-4">
                                                         <!-- Tanggal Mulai -->
                                                         <div>
@@ -190,7 +191,7 @@
                                                     </div>
                                                     <div>
                                                         <label for="jumlah_mahasiswa-{{$data->id}}" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
-                                                        <input type="text" name="jumlah_mahasiswa" id="jumlah_mahasiswa-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="{{ old('jumlah_mahasiswa', $data->jumlah_mahasiswa) }}" required="">
+                                                        <input type="text" name="jumlah_mahasiswa" id="jumlah_mahasiswa-{{$data->id}}" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500"  >
                                                     </div>
                                                     </div>
 
@@ -340,6 +341,7 @@
                                         <label for="jumlah_mahasiswa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
                                         <input type="number" id="jumlah_mahasiswa" name="jumlah_mahasiswa"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                     </div>
+                                    
 
                                 </div>
                             </div>

@@ -33,7 +33,7 @@ class PemetaanMKController extends Controller
             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
             // 'jumlah_mahasiswa' => 'nullable|integer|min:1'
         ]);
-        
+
         if ($validated['jenis_ruangan'] === 'RD') {
             $validated['jumlah_mahasiswa'] = $request->validate([
                 'jumlah_mahasiswa' => 'required|integer|min:1',  // If RD, jumlah_mahasiswa must be provided
@@ -66,6 +66,9 @@ class PemetaanMKController extends Controller
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
         ]);
+        // dd($request->all());
+
+
 
         // Jika jenis ruangan adalah RD, validasi jumlah_mahasiswa
         if ($validated['jenis_ruangan'] === 'RD') {
@@ -77,8 +80,10 @@ class PemetaanMKController extends Controller
             $validated['jumlah_mahasiswa'] = null;
         }
 
+
         // Perbarui data di tabel pemetaan
         $datas->update($validated);
+        
 
         return redirect()->route('pemetaan_mk.index')->with('success', 'Data Pemetaan berhasil diperbarui.');
     }

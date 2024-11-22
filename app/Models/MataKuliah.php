@@ -15,12 +15,10 @@ class MataKuliah extends Model
     protected $fillable = [
         'nama_matakuliah',
         'tingkat',
-        'tanggal_mulai',
-        'tanggal_selesai'
     ];
     protected $table = 'mata_kuliahs';
 
-   
+
 
     public function dosen(): BelongsToMany
     {

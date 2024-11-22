@@ -34,13 +34,12 @@ class Pemetaan extends Model
 
         static::updated(function ($pemetaan) {
             // Setelah pemetaan diperbarui, update jadwal ruangan
-            $pemetaan->createJadwalRuangan();
+            $pemetaan->updateJadwalRuangan();
         });
     }
 
     public function createJadwalRuangan()
     {
-        // Mengambil data dari pemetaan
         $jam_masuk = $this->jam_mulai;
         $jam_keluar = $this->jam_selesai;
         $hari = $this->hari;
@@ -50,9 +49,9 @@ class Pemetaan extends Model
         $tanggal_selesai = $this->tanggal_selesai;
 
         // Periksa apakah tanggal saat ini berada dalam rentang waktu yang sesuai
-        $currentDate = now()->toDateString();  // Ambil tanggal saat ini
+        $currentDate = now()->toDateString();
         if ($currentDate < $tanggal_mulai || $currentDate > $tanggal_selesai) {
-            return;  // Jika tanggal saat ini tidak dalam rentang waktu, tidak buat jadwal
+            return;
         }
 
         // Validasi untuk jenis ruangan RD
@@ -60,7 +59,7 @@ class Pemetaan extends Model
             $ruangan = Ruangan::where('jenis_ruangan', 'RD')->first();
 
             if (!$ruangan) {
-                return; // Tidak ada ruangan RD yang tersedia
+                return redirect()->back()->withErrors(['ruangan_id' => 'Ruangan tidak valid untuk jenis RD.']);
             }
 
             $capacity = $ruangan->kapasitas;
@@ -80,10 +79,16 @@ class Pemetaan extends Model
                                 });
                         });
                 })
-                ->take($neededRooms) // Membatasi jumlah ruangan yang dibutuhkan
+                ->take($neededRooms)
                 ->get();
 
-            // Membuat jadwal ruangan jika ada ruangan yang tersedia
+            if ($availableRooms->count() < $neededRooms) {
+                return redirect()->back()->withErrors(['rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.']);
+            }
+
+            // Hanya buat satu entry di tabel pemetaan, tapi banyak entry di tabel jadwal_ruangan
+            JadwalRuangan::where('pemetaan_id', $this->id)->delete(); // Hapus jadwal lama jika ada
+
             foreach ($availableRooms as $room) {
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
@@ -94,9 +99,8 @@ class Pemetaan extends Model
                 ]);
             }
         } elseif ($jenis_ruangan === 'RK' || $jenis_ruangan === 'Seminar') {
-            // Jika jenis ruangan RK atau Seminar, hanya butuh satu ruangan
+            // Untuk jenis ruangan RK atau Seminar
             $roomType = $jenis_ruangan;
-
             $availableRooms = Ruangan::where('jenis_ruangan', $roomType)
                 ->whereNotIn('id', function ($query) use ($jam_masuk, $jam_keluar, $hari) {
                     $query->select('ruangan_id')
@@ -111,9 +115,10 @@ class Pemetaan extends Model
                                 });
                         });
                 })
-                ->first(); // Hanya butuh satu ruangan
+                ->first();
 
             if ($availableRooms) {
+                JadwalRuangan::where('pemetaan_id', $this->id)->delete(); // Hapus jadwal lama jika ada
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
                     'ruangan_id' => $availableRooms->id,
@@ -124,6 +129,13 @@ class Pemetaan extends Model
             }
         }
     }
+
+    public function updateJadwalRuangan()
+    {
+        // Memanggil fungsi yang sama seperti create, namun hanya memperbarui jadwal yang ada
+        $this->createJadwalRuangan();
+    }
+
 
     public function dosen()
     {
