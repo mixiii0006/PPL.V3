@@ -93,9 +93,7 @@ class Pemetaan extends Model
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
                     'ruangan_id' => $room->id,
-                    'jam_masuk' => $jam_masuk,
-                    'jam_keluar' => $jam_keluar,
-                    'hari' => $hari,
+
                 ]);
             }
         } elseif ($jenis_ruangan === 'RK' || $jenis_ruangan === 'Seminar') {
@@ -122,9 +120,7 @@ class Pemetaan extends Model
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
                     'ruangan_id' => $availableRooms->id,
-                    'jam_masuk' => $jam_masuk,
-                    'jam_keluar' => $jam_keluar,
-                    'hari' => $hari,
+                    
                 ]);
             }
         }

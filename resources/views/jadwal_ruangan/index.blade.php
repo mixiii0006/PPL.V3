@@ -87,7 +87,7 @@
                     <a href="#" class="text-lg font-bold text-blue-500 leading-tight">Jadwal</a>
                 </div>
 
-                <div class="w-[200px] h-[200px] mx-auto ">
+                <div class="w-auto h-[200px] mx-auto ">
                 {{-- <div class="w-auto h-auto mx-auto"> --}}
                 <table class="table-auto w-full text-left">
                     <tr>
@@ -273,7 +273,7 @@
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->dosen->Nama }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Tanggal Mulai - Selesai</a></td>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Tanggal</a></td>
                                             <td class="pr-2">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->tanggal_mulai }} s.d. {{ $data->pemetaan->tanggal_selesai }}</td>
                                         </tr>
@@ -287,6 +287,11 @@
                                             <td class="pr-2">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->hari }}</td>
                                         </tr>
+                                        {{-- <tr>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jumlah Mahasiwa</a></td>
+                                            <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
+                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jumlah_mahasiswa }}</td>
+                                        </tr> --}}
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Kapasitas Ruangan</a></td>
                                             <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
@@ -319,7 +324,7 @@
         </div>
 
           {{-- modal tambah --}}
-          <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+          {{-- <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
             <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
                 <!-- Modal content -->
                 <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
@@ -388,15 +393,6 @@
                                     <input type="number" id="jumlah_mahasiswa" name="jumlah_mahasiswa"  class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-blue-500 focus:ring-blue-500 sm:text-sm">
                                 </div>
 
-                                {{-- <label for="nama_ruangan" class="block  text-sm font-medium text-gray-900 dark:text-white">Ruang</label>
-                                <select name="ruangan_id" id="nama_ruangan" class="js-example-basic-multiple bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" name="states" multiple="multiple">
-                                    @foreach ($ruangan as $item)
-                                        <option value="{{ $item->id }}">{{ $item->nama_ruangan }}</option>
-                                    @endforeach
-                                </select>
-                                    @error('pemetaan_id')
-                                        <div class="text-red-500">{{ $message }}</div>
-                                    @enderror --}}
 
                                     <div id="ruangan_div" style="display:none;">
                                         <label for="ruangan_id">Pilih Ruangan</label>
@@ -416,7 +412,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <form action="{{ route('filter.jadwal') }}" method="get" id="filterModal" tabindex="-1" aria-hidden="true" class="fixed bg-gray-500 bg-opacity-25  left-0 right-0 top-0 z-50 hidden h-modal w-full overflow-y-auto overflow-x-hidden p-4 md:inset-0 md:h-full">
             <div class="relative h-full w-full max-w-xl md:h-auto">
@@ -437,6 +433,14 @@
                 <!-- Modal body -->
                 <div class="px-4 md:px-5">
                   <div class="mb-4 border-b border-gray-200 dark:border-gray-700">
+                    <ul class="-mb-px flex flex-wrap text-center text-sm font-medium" id="myTab" data-tabs-toggle="#myTabContent" role="tablist">
+                        <li class="mr-1" role="presentation">
+                          <button class="inline-block pb-2 pr-1" id="brand-tab" data-tabs-target="#brand" type="button" role="tab" aria-controls="profile" aria-selected="false">Ruangan</button>
+                        </li>
+                        <li class="mr-1" role="presentation">
+                          <button class="inline-block px-2 pb-2 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300" id="advanced-filers-tab" data-tabs-target="#advanced-filters" type="button" role="tab" aria-controls="advanced-filters" aria-selected="false">Mata Kuliah</button>
+                        </li>
+                    </ul>
 
                   </div>
                   <div id="myTabContent">
@@ -503,6 +507,29 @@
                             @endforeach
                         </select>
                     </div> --}}
+                </div>
+                <div class="space-y-4" id="advanced-filters" role="tabpanel" aria-labelledby="advanced-filters-tab">
+                    <div class="grid grid-cols-1 ">
+                        <div class="space-y-2">
+                            <h5 class="text-sm font-medium uppercase text-blue-500">Mata Kuliah</h5>
+                            <div class="grid grid-cols-2 gap-4">
+                                @foreach ($matakuliah->chunk(13) as $chunkedMatakuliah)
+                                    <div>
+                                        @foreach ($chunkedMatakuliah as $mataKuliah)
+                                            <div class="flex items-center mt-1">
+                                                <input id="checkbox_{{ $mataKuliah->id }}" type="checkbox" name="mata_kuliah_ids[]" value="{{ $mataKuliah->id }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
+                                                <label for="checkbox_{{ $mataKuliah->id }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                    {{ $mataKuliah->nama_matakuliah }}
+                                                </label>
+                                            </div>
+                                        @endforeach
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+
+
+                    </div>
                 </div>
 
 
