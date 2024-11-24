@@ -253,7 +253,7 @@
                                 <div class="flex justify-between mb-4 rounded-t sm:mb-5">
                                     <table>
                                         <tr>
-                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Ruangan</a></td>
+                                            <td  class="pr-4"><a class="text-sm font-semibold  text-gray-900  dark:text-white">Ruangan</a></td>
                                             <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->ruangan->nama_ruangan }}</td>
                                         </tr>
@@ -266,6 +266,11 @@
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Matakuliah</a></td>
                                             <td class="pr-2">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->mata_kuliah->nama_matakuliah }}</td>
+                                        </tr>
+                                        <tr>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Tingkat</a></td>
+                                            <td class="pr-2">:</td>
+                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->mata_kuliah->tingkat }}</td>
                                         </tr>
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Dosen</a></td>
@@ -293,12 +298,12 @@
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jumlah_mahasiswa }}</td>
                                         </tr> --}}
                                         <tr>
-                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Kapasitas Ruangan</a></td>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Kapasitas </a></td>
                                             <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->ruangan->kapasitas }}</td>
                                         </tr>
                                         <tr>
-                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Fasilitas Ruangan</a></td>
+                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Fasilitas </a></td>
                                             <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->ruangan->fasilitas }}</td>
                                         </tr>
@@ -440,6 +445,9 @@
                         <li class="mr-1" role="presentation">
                           <button class="inline-block px-2 pb-2 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300" id="advanced-filers-tab" data-tabs-target="#advanced-filters" type="button" role="tab" aria-controls="advanced-filters" aria-selected="false">Mata Kuliah</button>
                         </li>
+                        <li class="mr-1" role="presentation">
+                            <button class="inline-block px-2 pb-2 hover:border-gray-300 hover:text-gray-600 dark:hover:text-gray-300" id="advanced-filers-tab2" data-tabs-target="#advanced-filters2" type="button" role="tab" aria-controls="advanced-filters2" aria-selected="false">Hari</button>
+                          </li>
                     </ul>
 
                   </div>
@@ -526,6 +534,30 @@
                                     </div>
                                 @endforeach
                             </div>
+                        </div>
+
+
+                    </div>
+                </div>
+
+                <div class="space-y-4" id="advanced-filters2" role="tabpanel" aria-labelledby="advanced-filters-tab2">
+                    <div class="grid grid-cols-1 ">
+                        <div class="space-y-2">
+                            <h5 class="text-sm font-medium uppercase text-blue-500">Hari</h5>
+                            <div class="grid grid-cols-1 gap-2">
+                                @foreach (['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'] as $hari)
+                                    <div>
+                                        <div class="flex items-center mt-1">
+                                            <input id="checkbox_{{ $hari }}" type="checkbox" name="hari[]" value="{{ $hari }}" class="h-4 w-4 rounded border-gray-300 bg-gray-100 text-primary-600 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:ring-offset-gray-800 dark:focus:ring-primary-600" />
+                                            <label for="checkbox_{{ $hari }}" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+                                                {{ $hari }}
+                                            </label>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+
                         </div>
 
 

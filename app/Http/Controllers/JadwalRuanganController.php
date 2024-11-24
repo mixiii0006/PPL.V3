@@ -10,15 +10,31 @@ use Illuminate\Http\Request;
 
 class JadwalRuanganController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
+        $search = $request->input('search');
+
         // Ambil data JadwalRuangan yang berada dalam rentang waktu yang valid (tanggal_mulai dan tanggal_selesai)
         $datas = JadwalRuangan::with(['ruangan', 'pemetaan.mata_kuliah', 'pemetaan.dosen'])
             ->whereHas('pemetaan', function ($query) {
-                $query->whereDate('tanggal_mulai', '<=', now()) // Tanggal mulai dari tabel pemetaan
-                    ->whereDate('tanggal_selesai', '>=', now()); // Tanggal selesai dari tabel pemetaan
+                $query->whereDate('tanggal_mulai', '<=', now())
+                    ->whereDate('tanggal_selesai', '>=', now());
             })
-            ->get();
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->whereHas('ruangan', function ($q) use ($search) {
+                        $q->where('nama_ruangan', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('pemetaan.mata_kuliah', function ($q) use ($search) {
+                        $q->where('nama_matakuliah', 'like', "%{$search}%");
+                    })
+                    ->orWhereHas('pemetaan.dosen', function ($q) use ($search) {
+                        $q->where('Nama', 'like', "%{$search}%");
+                    });
+                });
+            })
+    ->get();
+
 
         // Ambil seluruh data pemetaan dengan relasi mata_kuliah dan dosen
         $pemetaan = Pemetaan::with(['mata_kuliah', 'dosen'])->get();
@@ -182,8 +198,9 @@ class JadwalRuanganController extends Controller
     public function filterJadwal(Request $request)
     {
         // Ambil data dari input request
-        $selectedRuanganIds = $request->input('ruangan_ids', []);
+        $selectedRuanganIds = $request->input('ruangan_ids', []); // Filter ID ruangan
         $selectedMataKuliahIds = $request->input('mata_kuliah_ids', []); // Filter ID mata kuliah
+        $selectedHari = $request->input('hari'); // Filter hari
 
         // Mulai query jadwal ruangan
         $query = JadwalRuangan::query();
@@ -194,15 +211,20 @@ class JadwalRuanganController extends Controller
         }
 
         // Gabungkan jadwal dengan tabel pemetaan dan mata kuliah
-        $query->whereHas('pemetaan', function ($pemetaanQuery) use ($selectedMataKuliahIds) {
+        $query->whereHas('pemetaan', function ($pemetaanQuery) use ($selectedMataKuliahIds, $selectedHari) {
             // Filter hanya jadwal yang masih berlangsung
             $pemetaanQuery->whereDate('tanggal_mulai', '<=', now())
                         ->whereDate('tanggal_selesai', '>=', now());
 
+            // Filter berdasarkan hari
+            if (!empty($selectedHari)) {
+                $pemetaanQuery->where('hari', $selectedHari);
+            }
+
             // Filter berdasarkan ID mata kuliah (dari relasi mata_kuliah)
             if (!empty($selectedMataKuliahIds)) {
                 $pemetaanQuery->whereHas('mata_kuliah', function ($mataKuliahQuery) use ($selectedMataKuliahIds) {
-                    $mataKuliahQuery->whereIn('id', $selectedMataKuliahIds); // Filter berdasarkan ID mata kuliah
+                    $mataKuliahQuery->whereIn('id', $selectedMataKuliahIds);
                 });
             }
         });
@@ -222,6 +244,7 @@ class JadwalRuanganController extends Controller
         // Kembalikan view dengan data jadwal yang sudah difilter
         return view('jadwal_ruangan.index', compact('ruangan', 'datas', 'matakuliah', 'pemetaan'));
     }
+
 
 
 }

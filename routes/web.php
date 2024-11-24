@@ -4,6 +4,7 @@ use App\Http\Controllers\Controller;
 use App\Http\Controllers\DataDiriController;
 use App\Http\Controllers\DataRuanganController;
 use App\Http\Controllers\DosenController;
+use App\Http\Controllers\JadwalDosenController;
 use App\Http\Controllers\JadwalRuanganController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\PemetaanMKController;
@@ -56,6 +57,10 @@ Route::middleware('roles:admin,operator')->group(function () {
 
 Route::middleware('roles:admin,operator,user')->group(function () {
     Route::resource('jadwal_ruangan', JadwalRuanganController::class);
+});
+
+Route::middleware('roles:user')->group(function () {
+    Route::resource('jadwal_dosen', JadwalDosenController::class);
 });
 
 Route::get('/filter-jadwal', [JadwalRuanganController::class, 'filterJadwal'])->name('filter.jadwal');

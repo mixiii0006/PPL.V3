@@ -50,43 +50,41 @@ class PemetaanMKController extends Controller
     }
 
     public function update(Request $request, string $id)
-    {
-        // Ambil data pemetaan berdasarkan ID
-        $datas = Pemetaan::findOrFail($id);
+{
+    // Ambil data pemetaan berdasarkan ID
+    $datas = Pemetaan::findOrFail($id);
 
-        // Validasi data
-        $validated = $request->validate([
-            'dosen_id' => 'required|exists:dosens,id',
-            'matakuliah_id' => 'required|exists:mata_kuliahs,id',
-            'nama_modul' => 'required|string|max:255',
-            'hari' => 'required|string|max:10',
-            'jam_mulai' => 'required|date_format:H:i',
-            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-            'jenis_ruangan' => 'required|in:RD,RK,Seminar',
-        ]);
-        // dd($request->all());
+    // Validasi data
+    $validated = $request->validate([
+        'dosen_id' => 'required|exists:dosens,id',
+        'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+        'nama_modul' => 'required|string|max:255',
+        'hari' => 'required|string|max:10',
+        'jam_mulai' => 'required|date_format:H:i',
+        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+        'tanggal_mulai' => 'required|date',
+        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+        'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
+    ]);
 
-
-
-        // Jika jenis ruangan adalah RD, validasi jumlah_mahasiswa
-        if ($validated['jenis_ruangan'] === 'RD') {
-            $validated['jumlah_mahasiswa'] = $request->validate([
-                'jumlah_mahasiswa' => 'required|integer|min:1', // Jika RD, jumlah_mahasiswa harus ada
-            ])['jumlah_mahasiswa'];
-        } else {
-            // Jika jenis ruangan adalah RK atau Seminar, set jumlah_mahasiswa ke null
-            $validated['jumlah_mahasiswa'] = null;
-        }
-
-
-        // Perbarui data di tabel pemetaan
-        $datas->update($validated);
-        
-
-        return redirect()->route('pemetaan_mk.index')->with('success', 'Data Pemetaan berhasil diperbarui.');
+    // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
+    if ($validated['jenis_ruangan'] === 'RD') {
+        $validated['jumlah_mahasiswa'] = $request->validate([
+            'jumlah_mahasiswa' => 'required|integer|min:1',
+        ])['jumlah_mahasiswa'];
+    } else {
+        // Jika jenis ruangan bukan RD, set jumlah_mahasiswa ke null
+        $validated['jumlah_mahasiswa'] = null;
     }
+
+    // Perbarui data di tabel pemetaan
+    $datas->update($validated);
+
+    // Redirect dengan pesan sukses
+    return redirect()->route('pemetaan_mk.index')->with('success', 'Data Pemetaan berhasil diperbarui.');
+}
+
+
 
 
 

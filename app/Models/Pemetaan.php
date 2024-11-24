@@ -65,17 +65,19 @@ class Pemetaan extends Model
             $capacity = $ruangan->kapasitas;
             $neededRooms = ceil($jumlah_mahasiswa / $capacity);
 
+            // Cari ruangan yang tersedia dan tidak bertabrakan dengan jadwal lain
             $availableRooms = Ruangan::where('jenis_ruangan', 'RD')
                 ->whereNotIn('id', function ($query) use ($jam_masuk, $jam_keluar, $hari) {
                     $query->select('ruangan_id')
                         ->from('jadwal_ruangans')
-                        ->where('hari', $hari)
+                        ->join('pemetaans', 'jadwal_ruangans.pemetaan_id', '=', 'pemetaans.id')
+                        ->where('pemetaans.hari', $hari)
                         ->where(function ($query) use ($jam_masuk, $jam_keluar) {
-                            $query->whereBetween('jam_masuk', [$jam_masuk, $jam_keluar])
-                                ->orWhereBetween('jam_keluar', [$jam_masuk, $jam_keluar])
+                            $query->whereBetween('pemetaans.jam_mulai', [$jam_masuk, $jam_keluar])
+                                ->orWhereBetween('pemetaans.jam_selesai', [$jam_masuk, $jam_keluar])
                                 ->orWhere(function ($query) use ($jam_masuk, $jam_keluar) {
-                                    $query->where('jam_masuk', '<=', $jam_masuk)
-                                        ->where('jam_keluar', '>=', $jam_keluar);
+                                    $query->where('pemetaans.jam_mulai', '<=', $jam_masuk)
+                                        ->where('pemetaans.jam_selesai', '>=', $jam_keluar);
                                 });
                         });
                 })
@@ -86,45 +88,47 @@ class Pemetaan extends Model
                 return redirect()->back()->withErrors(['rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.']);
             }
 
-            // Hanya buat satu entry di tabel pemetaan, tapi banyak entry di tabel jadwal_ruangan
-            JadwalRuangan::where('pemetaan_id', $this->id)->delete(); // Hapus jadwal lama jika ada
+            // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
+            JadwalRuangan::where('pemetaan_id', $this->id)->delete();
 
             foreach ($availableRooms as $room) {
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
                     'ruangan_id' => $room->id,
-
                 ]);
             }
         } elseif ($jenis_ruangan === 'RK' || $jenis_ruangan === 'Seminar') {
             // Untuk jenis ruangan RK atau Seminar
-            $roomType = $jenis_ruangan;
-            $availableRooms = Ruangan::where('jenis_ruangan', $roomType)
+            $availableRoom = Ruangan::where('jenis_ruangan', $jenis_ruangan)
                 ->whereNotIn('id', function ($query) use ($jam_masuk, $jam_keluar, $hari) {
                     $query->select('ruangan_id')
                         ->from('jadwal_ruangans')
-                        ->where('hari', $hari)
+                        ->join('pemetaans', 'jadwal_ruangans.pemetaan_id', '=', 'pemetaans.id')
+                        ->where('pemetaans.hari', $hari)
                         ->where(function ($query) use ($jam_masuk, $jam_keluar) {
-                            $query->whereBetween('jam_masuk', [$jam_masuk, $jam_keluar])
-                                ->orWhereBetween('jam_keluar', [$jam_masuk, $jam_keluar])
+                            $query->whereBetween('pemetaans.jam_mulai', [$jam_masuk, $jam_keluar])
+                                ->orWhereBetween('pemetaans.jam_selesai', [$jam_masuk, $jam_keluar])
                                 ->orWhere(function ($query) use ($jam_masuk, $jam_keluar) {
-                                    $query->where('jam_masuk', '<=', $jam_masuk)
-                                        ->where('jam_keluar', '>=', $jam_keluar);
+                                    $query->where('pemetaans.jam_mulai', '<=', $jam_masuk)
+                                        ->where('pemetaans.jam_selesai', '>=', $jam_keluar);
                                 });
                         });
                 })
                 ->first();
 
-            if ($availableRooms) {
-                JadwalRuangan::where('pemetaan_id', $this->id)->delete(); // Hapus jadwal lama jika ada
+            if ($availableRoom) {
+                // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
+                JadwalRuangan::where('pemetaan_id', $this->id)->delete();
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
-                    'ruangan_id' => $availableRooms->id,
-                    
+                    'ruangan_id' => $availableRoom->id,
                 ]);
+            } else {
+                return redirect()->back()->withErrors(['rooms' => 'Tidak ada ruangan RK atau Seminar yang tersedia pada jam dan hari ini.']);
             }
         }
     }
+
 
     public function updateJadwalRuangan()
     {
