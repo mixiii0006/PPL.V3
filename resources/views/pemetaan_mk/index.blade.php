@@ -34,8 +34,8 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">NO</th>
+                                <th scope="col" class="px-4 py-3">Nama Kuliah</th>
                                 <th scope="col" class="px-4 py-3">Modul</th>
-                                <th scope="col" class="px-4 py-3">Mata Kuliah</th>
                                 <th scope="col" class="px-4 py-3">Dosen</th>
                                 <th scope="col" class="px-4 py-3">Hari</th>
                                 <th scope="col" class="px-4 py-3">Jam Mulai</th>
@@ -241,11 +241,11 @@
                             <div class="grid gap-4">
                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
                                     <div>
-                                        <label for="nama_modul" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Modul</label>
+                                        <label for="nama_modul" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul Kuliah</label>
                                         <input type="text" name="nama_modul" id="nama_modul" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
                                     </div>
 
-                                    <label for="nama_matakuliah" class="block  text-sm font-medium text-gray-900 dark:text-white">Mata Kuliah</label>
+                                    <label for="nama_matakuliah" class="block  text-sm font-medium text-gray-900 dark:text-white">Modul</label>
                                     <select name="matakuliah_id" id="nama_matakuliah" class="js-example-basic-single bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" name="states" multiple="multiple">
                                         @foreach ($matakuliah as $item)
                                             <option value="{{ $item->id }}">{{ $item->nama_matakuliah }}</option>
@@ -341,7 +341,7 @@
                                         <label for="jumlah_mahasiswa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
                                         <input type="number" id="jumlah_mahasiswa" name="jumlah_mahasiswa"  class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500">
                                     </div>
-                                    
+
 
                                 </div>
                             </div>

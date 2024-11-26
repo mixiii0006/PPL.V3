@@ -2,9 +2,11 @@
 
 namespace App\Http\Requests\Auth;
 
+use App\Models\User;
 use Illuminate\Auth\Events\Lockout;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
@@ -25,12 +27,13 @@ class LoginRequest extends FormRequest
      * @return array<string, \Illuminate\Contracts\Validation\Rule|array|string>
      */
     public function rules(): array
-    {
-        return [
-            'email' => ['required', 'string', 'email'],
-            'password' => ['required', 'string'],
-        ];
-    }
+{
+    return [
+        'email' => ['required', 'string'], // Allow both email and NIP to be entered
+        'password' => ['required', 'string'],
+    ];
+}
+
 
     /**
      * Attempt to authenticate the request's credentials.
@@ -41,9 +44,15 @@ class LoginRequest extends FormRequest
     {
         $this->ensureIsNotRateLimited();
 
-        if (! Auth::attempt($this->only('email', 'password'), $this->boolean('remember'))) {
-            RateLimiter::hit($this->throttleKey());
+        $login = $this->input('email'); // The input field can be used for both email and NIP
+        $password = $this->input('password'); // Password
 
+        // Attempt authentication using email or NIP
+        $user = User::where('email', $login)->first();  // Find the user by email or NIP
+        if ($user && Hash::check($password, $user->password)) {
+            Auth::login($user);
+        } else {
+            RateLimiter::hit($this->throttleKey());
             throw ValidationException::withMessages([
                 'email' => trans('auth.failed'),
             ]);
@@ -51,6 +60,8 @@ class LoginRequest extends FormRequest
 
         RateLimiter::clear($this->throttleKey());
     }
+
+
 
     /**
      * Ensure the login request is not rate limited.

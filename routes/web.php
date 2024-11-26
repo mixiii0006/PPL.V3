@@ -39,8 +39,8 @@ Route::middleware('roles:admin')->group(function () {
     Route::resource('data_diri', DataDiriController::class);
 });
 
-Route::middleware('roles:admin,operator')->group(function () {
-});
+// Route::middleware('roles:admin,operator')->group(function () {
+// });
 
 Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('data_dosen', DosenController::class);
@@ -48,8 +48,8 @@ Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('data_ruangan', DataRuanganController::class);
 });
 
-Route::middleware('roles:admin,operator')->group(function () {
-});
+// Route::middleware('roles:admin,operator')->group(function () {
+// });
 
 Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('pemetaan_mk', PemetaanMKController::class);
