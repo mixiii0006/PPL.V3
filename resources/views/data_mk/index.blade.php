@@ -34,7 +34,7 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">NO</th>
-                                <th scope="col" class="px-4 py-3">Mata Kuliah</th>
+                                <th scope="col" class="px-4 py-3">Modul</th>
                                 <th scope="col" class="px-4 py-3">Tingkat</th>
 
 
@@ -149,7 +149,7 @@
                             <div class="grid gap-4">
                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
                                     <div>
-                                        <label for="nama_matakuliah" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Mata Kuliah</label>
+                                        <label for="nama_matakuliah" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Nama Modul</label>
                                         <input type="text" name="nama_matakuliah" id="nama_matakuliah" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
                                     </div>
                                     <div>

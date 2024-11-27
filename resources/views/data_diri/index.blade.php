@@ -30,7 +30,7 @@
                             </button>
                         </div> --}}
 
-                    </div>
+                    {{-- </div> --}}
                 </div>
                 <div  class="overflow-x-auto">
 
@@ -97,9 +97,9 @@
                                             <form action="{{ route('data_diri.update', $data->id) }}" method="POST">
                                                 @csrf
                                                 @method('PUT')
-                                                <div class=" text-center mb-8 lg:mb-8">
+                                                {{-- <div class=" text-center mb-8 lg:mb-8">
                                                     <h2 class="mb-2 mt-4 text-3xl tracking-tight font-bold text-blue-500 dark:text-blue-500">Edit Data</h2>
-                                                </div>
+                                                </div> --}}
                                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
                                                     <div>
                                                         <label for="name" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Name</label>
