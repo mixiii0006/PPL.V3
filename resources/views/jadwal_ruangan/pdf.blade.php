@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <h2>Jadwal Ruangan</h2>
+    <h2 class="text-center text-lg font-bold">Jadwal Ruangan</h2>
 
     <table>
         <thead>
@@ -41,18 +41,19 @@
         </thead>
         <tbody>
             @foreach ($datas as $jadwal)
-                <tr>
-                    <td>{{ $jadwal->pemetaan->mata_kuliah->nama }}</td>
-                    <td>{{ $jadwal->pemetaan->modul }}</td>
-                    <td>{{ $jadwal->pemetaan->dosen->nama }}</td>
-                    <td>{{ $jadwal->pemetaan->tingkat }}</td>
-                    <td>{{ $jadwal->pemetaan->hari }}</td>
-                    <td>{{ $jadwal->jam_mulai }}</td>
-                    <td>{{ $jadwal->jam_selesai }}</td>
-                    <td>{{ $jadwal->tanggal_mulai->format('d-m-Y') }}</td>
-                    <td>{{ $jadwal->tanggal_selesai->format('d-m-Y') }}</td>
-                    <td>{{ $jadwal->ruangan->nama }}</td>
-                </tr>
+            <tr>
+                <td style="width: 20%;">{{ $jadwal->pemetaan->nama_modul }}</td>
+                <td style="width: 20%;">{{ $jadwal->pemetaan->mata_kuliah->nama_matakuliah }}</td>
+                <td style="width: 15%;">{{ $jadwal->pemetaan->dosen->Nama }}</td>
+                <td style="width: 5%;">{{ $jadwal->pemetaan->mata_kuliah->tingkat }}</td>
+                <td style="width: 10%;">{{ $jadwal->pemetaan->hari }}</td>
+                <td style="width: 10%;">{{ $jadwal->pemetaan->jam_mulai }}</td>
+                <td style="width: 10%;">{{ $jadwal->pemetaan->jam_selesai }}</td>
+                <td style="width: 15%;">{{ $jadwal->pemetaan->tanggal_mulai }}</td>
+                <td style="width: 15%;">{{ $jadwal->pemetaan->tanggal_selesai }}</td>
+                <td style="width: 10%;">{{ $jadwal->ruangan->nama_ruangan }}</td>
+            </tr>
+
             @endforeach
         </tbody>
     </table>

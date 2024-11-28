@@ -9,7 +9,7 @@ use App\Models\Pemetaan;
 use App\Models\Ruangan;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Barryvdh\DomPDF\Facade as PDF;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class JadwalRuanganController extends Controller
 {
@@ -68,8 +68,10 @@ class JadwalRuanganController extends Controller
         // Ambil seluruh data mata kuliah
         $matakuliah = MataKuliah::all();
 
+        $dosen = Dosen::all();
+
         // Kembalikan view dengan data yang dibutuhkan
-        return view('jadwal_ruangan.index', compact('datas', 'pemetaan', 'ruangan', 'matakuliah'));
+        return view('jadwal_ruangan.index', compact('datas', 'pemetaan', 'ruangan', 'matakuliah', 'dosen'));
     }
 
 
@@ -227,6 +229,7 @@ class JadwalRuanganController extends Controller
 
         $ruangan = Ruangan::all();
         $matakuliah = MataKuliah::all();
+        $dosen = Dosen::all();
 
 
         // Tampilkan view dengan data jadwal yang sesuai
@@ -294,75 +297,48 @@ class JadwalRuanganController extends Controller
 
     // Ambil seluruh data pemetaan dengan relasi mata_kuliah dan dosen
     $pemetaan = Pemetaan::with(['mata_kuliah', 'dosen'])->get();
+    $dosen = Dosen::all();
 
     // Kembalikan view dengan data jadwal yang sudah difilter
-    return view('jadwal_ruangan.index', compact('ruangan', 'datas', 'matakuliah', 'pemetaan'));
+    return view('jadwal_ruangan.index', compact('ruangan', 'datas', 'matakuliah', 'pemetaan','dosen'));
 }
 
 
+public function printJadwalPDF(Request $request)
+{
+    $mataKuliahId = $request->input('mata_kuliah');
+    $dosenId = $request->input('dosen');
 
-// public function printJadwalPDF(Request $request)
-// {
-//     // Ambil data yang telah difilter (Anda bisa menyesuaikan querynya sesuai dengan kebutuhan)
-//     $selectedRuanganIds = $request->input('ruangan_ids', []); // Filter ID ruangan
-//     $selectedMataKuliahIds = $request->input('mata_kuliah_ids', []); // Filter ID mata kuliah
-//     $selectedHari = $request->input('hari'); // Filter hari
+    $query = JadwalRuangan::query();
 
-//     $query = JadwalRuangan::query();
+    // Filter berdasarkan mata kuliah
+    if (!empty($mataKuliahId)) {
+        $query->whereHas('pemetaan.mata_kuliah', function ($q) use ($mataKuliahId) {
+            $q->where('id', $mataKuliahId);
+        });
+    }
 
-//     // Filter berdasarkan ID ruangan yang dipilih
-//     if (!empty($selectedRuanganIds)) {
-//         $query->whereIn('ruangan_id', $selectedRuanganIds);
-//     }
+    // Filter berdasarkan dosen
+    if (!empty($dosenId)) {
+        $query->whereHas('pemetaan.dosen', function ($q) use ($dosenId) {
+            $q->where('id', $dosenId);
+        });
+    }
 
-//     // Gabungkan jadwal dengan tabel pemetaan dan mata kuliah
-//     $query->whereHas('pemetaan', function ($pemetaanQuery) use ($selectedMataKuliahIds, $selectedHari) {
-//         // Filter hanya jadwal yang masih berlangsung
-//         $pemetaanQuery->whereDate('tanggal_mulai', '<=', now())
-//                     ->whereDate('tanggal_selesai', '>=', now());
+    // Ambil data sesuai filter
+    $datas = $query->get();
 
-//         // Filter berdasarkan hari
-//         if (!empty($selectedHari)) {
-//             $pemetaanQuery->where('hari', $selectedHari);
-//         }
+    // Siapkan data untuk PDF
+    $pdfData = [
+        'datas' => $datas,
+    ];
 
-//         // Filter berdasarkan ID mata kuliah (dari relasi mata_kuliah)
-//         if (!empty($selectedMataKuliahIds)) {
-//             $pemetaanQuery->whereHas('mata_kuliah', function ($mataKuliahQuery) use ($selectedMataKuliahIds) {
-//                 $mataKuliahQuery->whereIn('id', $selectedMataKuliahIds);
-//             });
-//         }
-//     });
+    // Generate PDF menggunakan view
+    $pdf = Pdf::loadView('jadwal_ruangan.pdf', $pdfData);
 
-//     // Ambil data jadwal yang sudah difilter
-//     $datas = $query->get();
-
-//     // Ambil daftar ruangan untuk form filter
-//     $ruangan = Ruangan::all();
-
-//     // Ambil daftar mata kuliah untuk form filter
-//     $matakuliah = MataKuliah::all();
-
-//     // Ambil seluruh data pemetaan dengan relasi mata_kuliah dan dosen
-//     $pemetaan = Pemetaan::with(['mata_kuliah', 'dosen'])->get();
-
-//     // Siapkan data yang akan dipakai di PDF
-//     $pdfData = [
-//         'datas' => $datas,
-//         'ruangan' => $ruangan,
-//         'matakuliah' => $matakuliah,
-//         'pemetaan' => $pemetaan
-//     ];
-
-//     // Gunakan view untuk generate PDF
-//     $pdf = PDF::loadView('jadwal_ruangan.pdf', $pdfData);
-
-//     // Return PDF sebagai response
-//     return $pdf->download('jadwal_ruangan.pdf');
-// }
-
-
-
+    // Download PDF
+    return $pdf->download('jadwal_ruangan.pdf');
+}
 
 
 }

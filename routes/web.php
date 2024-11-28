@@ -64,6 +64,8 @@ Route::middleware('roles:user')->group(function () {
 });
 
 Route::get('/filter-jadwal', [JadwalRuanganController::class, 'filterJadwal'])->name('filter.jadwal');
+Route::get('/jadwal-ruangan/cetak', [JadwalRuanganController::class, 'printJadwalPDF'])->name('jadwal_ruangan.cetak');
+
 
 
 
