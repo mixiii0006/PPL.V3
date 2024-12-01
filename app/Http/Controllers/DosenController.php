@@ -81,12 +81,3 @@ class DosenController extends Controller
 
 
 
-// 'NIP' => 'required|unique:dosens,NIP',
-// 'NIDN' => 'required|integer|unique:dosens,NIDN',
-// 'Nama' => 'required|string|max:100',
-// 'TTL' => 'nullable|string|max:100', // Date format bisa ditambahkan sesuai kebutuhan
-// 'CPNS' => 'nullable|string|max:100', // Bisa gunakan date_format jika format spesifik
-// 'Gol_Akhir' => 'nullable|string|max:50',
-// 'Pendidikan_Akhir' => 'nullable|string|max:50',
-// 'Jabfung_Akhir' => 'nullable|string|max:50',
-// 'Homebase_PDDIKTI' => 'nullable|string|max:100'
