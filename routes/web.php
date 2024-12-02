@@ -30,28 +30,14 @@ Route::middleware('auth')->group(function () {
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 });
 
-// Route::middleware('roles:admin,operator,user')->group(function () {
-//     Route::resource('dashboard', DashboardController::class);
-// });
-
-
 Route::middleware('roles:admin')->group(function () {
     Route::resource('data_diri', DataDiriController::class);
 });
-
-// Route::middleware('roles:admin,operator')->group(function () {
-// });
 
 Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('data_dosen', DosenController::class);
     Route::resource('data_mk', MataKuliahController::class);
     Route::resource('data_ruangan', DataRuanganController::class);
-});
-
-// Route::middleware('roles:admin,operator')->group(function () {
-// });
-
-Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('pemetaan_mk', PemetaanMKController::class);
 });
 
@@ -65,8 +51,7 @@ Route::middleware('roles:user')->group(function () {
 
 Route::get('/filter-jadwal', [JadwalRuanganController::class, 'filterJadwal'])->name('filter.jadwal');
 Route::get('/jadwal-ruangan/cetak', [JadwalRuanganController::class, 'printJadwalPDF'])->name('jadwal_ruangan.cetak');
-
-
+Route::post('/pemetaans/import-csv', [PemetaanMKController::class, 'importCSV'])->name('pemetaans.import-csv');
 
 
 require __DIR__.'/auth.php';

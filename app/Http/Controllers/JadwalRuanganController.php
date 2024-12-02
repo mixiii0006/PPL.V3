@@ -233,7 +233,7 @@ class JadwalRuanganController extends Controller
 
 
         // Tampilkan view dengan data jadwal yang sesuai
-        return view('jadwal_ruangan.index', compact('datas', 'day','pemetaan', 'matakuliah','ruangan'));
+        return view('jadwal_ruangan.index', compact('dosen','datas', 'day','pemetaan', 'matakuliah','ruangan'));
     }
     public function filterJadwal(Request $request)
 {

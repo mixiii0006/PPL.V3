@@ -6,6 +6,8 @@ use App\Models\Pemetaan;
 use App\Models\Dosen;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+use Carbon\Carbon;
 
 class PemetaanMKController extends Controller
 {
@@ -98,5 +100,85 @@ public function destroy($id){
     $datas->delete();
     return redirect('/pemetaan_mk')->with('success', 'Berhasil Dihapus');
 }
+
+public function importCSV(Request $request)
+{
+    $request->validate([
+        'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+    ]);
+
+    $file = $request->file('csv_file');
+    $path = $file->getRealPath();
+
+    // Membaca semua baris CSV
+    $csvData = array_map(function ($line) {
+        return str_getcsv($line, ';'); // Pisahkan berdasarkan pemisah ;
+    }, file($path));
+
+    // Ambil header (nama kolom) dan hapus dari data
+    $header = array_shift($csvData);
+
+    // // Debug: Lihat hasil csvData setelah menghapus header
+    // dd($csvData);
+
+    $errorRows = [];
+    foreach ($csvData as $key => $row) {
+        // Gabungkan header dengan data agar lebih mudah diakses
+        $row = array_combine($header, $row);
+
+
+        // Cari ID berdasarkan nama dosen dan mata kuliah
+        $dosen = Dosen::where('Nama', $row['nama_dosen'])->first();
+        $matakuliah = MataKuliah::where('nama_matakuliah', $row['nama_modul'])->first();
+
+
+        if (!$dosen || !$matakuliah) {
+            $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_matakuliah'];
+            continue;
+        }
+
+        // Validasi data lainnya
+        $validator = Validator::make($row, [
+            'judul_kuliah' => 'required|string|max:255',
+            'hari' => 'required|string|max:20',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'jenis_ruangan' => 'required|string|in:RD,RK,Seminar',
+            'jumlah_mahasiswa' => 'nullable|integer|min:0',
+
+        ]);
+
+
+
+        if ($validator->fails()) {
+
+            dd($validator->errors()->all());
+        }
+
+        // Simpan data ke tabel `pemetaans`
+        Pemetaan::create([
+            'dosen_id' => $dosen->id,
+            'matakuliah_id' => $matakuliah->id,
+            'nama_modul' => $row['judul_kuliah'],
+            'hari' => $row['hari'],
+            'jam_mulai' => $row['jam_mulai'],
+            'jam_selesai' => $row['jam_selesai'],
+            'tanggal_mulai' => $row['tanggal_mulai'],
+            'tanggal_selesai' => $row['tanggal_selesai'],
+            'jenis_ruangan' => $row['jenis_ruangan'],
+            'jumlah_mahasiswa' => $row['jumlah_mahasiswa'],
+        ]);
+    }
+
+    if (!empty($errorRows)) {
+        return back()->with('errors', $errorRows)->with('success', 'Sebagian data berhasil diimpor.');
+    }
+
+    return back()->with('success', 'Semua data berhasil diimpor.');
+}
+
+
 
 }
