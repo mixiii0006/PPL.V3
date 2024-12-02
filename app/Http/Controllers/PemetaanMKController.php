@@ -98,7 +98,7 @@ public function delete(Pemetaan $datas)
 public function destroy($id){
     $datas = Pemetaan::findorfail($id);
     $datas->delete();
-    return redirect('/pemetaan_mk')->with('success', 'Berhasil Dihapus');
+    return redirect('/pemetaan_mk');
 }
 
 public function importCSV(Request $request)
@@ -118,22 +118,27 @@ public function importCSV(Request $request)
     // Ambil header (nama kolom) dan hapus dari data
     $header = array_shift($csvData);
 
-    // // Debug: Lihat hasil csvData setelah menghapus header
-    // dd($csvData);
-
     $errorRows = [];
     foreach ($csvData as $key => $row) {
         // Gabungkan header dengan data agar lebih mudah diakses
         $row = array_combine($header, $row);
 
-
         // Cari ID berdasarkan nama dosen dan mata kuliah
         $dosen = Dosen::where('Nama', $row['nama_dosen'])->first();
         $matakuliah = MataKuliah::where('nama_matakuliah', $row['nama_modul'])->first();
 
-
         if (!$dosen || !$matakuliah) {
             $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_matakuliah'];
+            continue;
+        }
+
+        // Mengonversi tanggal ke format yang benar (Y-m-d)
+        $tanggalMulai = Carbon::createFromFormat('d/m/Y', $row['tanggal_mulai'])->format('Y-m-d');
+        $tanggalSelesai = Carbon::createFromFormat('d/m/Y', $row['tanggal_selesai'])->format('Y-m-d');
+
+        // Validasi tanggal mulai dan selesai
+        if (Carbon::parse($tanggalMulai)->gt(Carbon::parse($tanggalSelesai))) {
+            $errorRows[$key + 1][] = "Tanggal mulai harus sebelum atau sama dengan tanggal selesai.";
             continue;
         }
 
@@ -143,33 +148,30 @@ public function importCSV(Request $request)
             'hari' => 'required|string|max:20',
             'jam_mulai' => 'required|date_format:H:i',
             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-            'tanggal_mulai' => 'required|date',
-            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jenis_ruangan' => 'required|string|in:RD,RK,Seminar',
             'jumlah_mahasiswa' => 'nullable|integer|min:0',
-
         ]);
 
-
-
         if ($validator->fails()) {
-
             dd($validator->errors()->all());
         }
 
         // Simpan data ke tabel `pemetaans`
-        Pemetaan::create([
+        $pemetaan = Pemetaan::create([
             'dosen_id' => $dosen->id,
             'matakuliah_id' => $matakuliah->id,
             'nama_modul' => $row['judul_kuliah'],
             'hari' => $row['hari'],
             'jam_mulai' => $row['jam_mulai'],
             'jam_selesai' => $row['jam_selesai'],
-            'tanggal_mulai' => $row['tanggal_mulai'],
-            'tanggal_selesai' => $row['tanggal_selesai'],
+            'tanggal_mulai' => $tanggalMulai, // Use the formatted date
+            'tanggal_selesai' => $tanggalSelesai, // Use the formatted date
             'jenis_ruangan' => $row['jenis_ruangan'],
             'jumlah_mahasiswa' => $row['jumlah_mahasiswa'],
         ]);
+
+        // Pastikan jadwal langsung dibuat setelah pemetaan dibuat
+        $pemetaan->createJadwalRuangan();
     }
 
     if (!empty($errorRows)) {
@@ -178,6 +180,7 @@ public function importCSV(Request $request)
 
     return back()->with('success', 'Semua data berhasil diimpor.');
 }
+
 
 
 
