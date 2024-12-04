@@ -88,7 +88,7 @@ class Pemetaan extends Model
                 return redirect()->back()->withErrors(['rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.']);
             }
 
-            // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
+            
             JadwalRuangan::where('pemetaan_id', $this->id)->delete();
 
             foreach ($availableRooms as $room) {
