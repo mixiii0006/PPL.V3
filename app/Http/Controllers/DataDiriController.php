@@ -23,32 +23,46 @@ class DataDiriController extends Controller
     }
 
     // Fungsi untuk menyimpan data user baru
+    // public function store(Request $request)
+    // {
+    //     // Validasi input
+    //     $validated = $request->validate([
+    //         'name' => 'required|string|max:255',
+    //         'email' => 'required|unique:users', // Pastikan memeriksa kolom yang benar
+    //         'password' => 'required|string|min:8|confirmed', // Validasi password
+    //         'role' => 'required|in:admin,user,operator', // Validasi role
+    //     ]);
+    //     dd($validated); // Debug data request yang dikirim
+
+    //     // Simpan data user ke database
+    //     User::create([
+    //         'name' => $validated['name'],
+    //         'email' => $validated['email'],
+    //         'password' => Hash::make($validated['password']), // Menggunakan Hash untuk mengenkripsi password
+    //         'role' => $validated['role'],
+    //     ]);
+
+
+    //     // Redirect setelah berhasil disimpan dengan pesan sukses
+    //     return redirect(route('data_diri.index'))->with('success', 'User created successfully!');
+    // }
+
     public function store(Request $request)
     {
-
-
-        // Validasi input
+        // Validasi data
         $validated = $request->validate([
             'name' => 'required|string|max:255',
-            'email' => 'required|email|unique:users,email', // Pastikan memeriksa kolom yang benar
-            'password' => 'required|string|min:8|confirmed', // Validasi password
-            'role' => 'required|in:admin,user', // Validasi role
-        ]);
-        dd($validated); // Debug data request yang dikirim
-
-        // Simpan data user ke database
-        User::create([
-            'name' => $validated['name'],
-            'email' => $validated['email'],
-            'password' => Hash::make($validated['password']), // Menggunakan Hash untuk mengenkripsi password
-            'role' => $validated['role'],
+            'email' => 'required|string|unique:users',// Pastikan memeriksa kolom yang benar
+            'password' => 'required|string|min:8', // Validasi password
+            'role' => 'required|in:admin,user,operator', // Validasi role
         ]);
 
 
-        // Redirect setelah berhasil disimpan dengan pesan sukses
+
+        User::create($validated);
+
         return redirect(route('data_diri.index'))->with('success', 'User created successfully!');
     }
-
 
 
     public function update(Request $request, string $id)
