@@ -150,7 +150,7 @@
                             <path d="M2 6a2 2 0 0 1 2-2h16a2 2 0 1 1 0 4H4a2 2 0 0 1-2-2Z"/>
                           </svg>
 
-                          <span class="ml-3">Data Mata Kulaih</span></a
+                          <span class="ml-3">Data Mata Kuliah</span></a
                         >
                       </li>
                       <li>
