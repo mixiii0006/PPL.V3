@@ -15,7 +15,7 @@ class MataKuliahController extends Controller
 
     public function store(Request $request)
     {
-        // Validasi data
+       
         $validated = $request->validate([
 
             'nama_matakuliah' => 'required|string|max:100',
