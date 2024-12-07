@@ -56,13 +56,7 @@ class Pemetaan extends Model
 
         // Validasi untuk jenis ruangan RD
         if ($jenis_ruangan === 'RD' && $jumlah_mahasiswa > 0) {
-            $ruangan = Ruangan::where('jenis_ruangan', 'RD')->first();
-
-            if (!$ruangan) {
-                return redirect()->back()->withErrors(['ruangan_id' => 'Ruangan tidak valid untuk jenis RD.']);
-            }
-
-            $capacity = $ruangan->kapasitas;
+            $capacity = Ruangan::where('jenis_ruangan', 'RD')->first()->kapasitas;
             $neededRooms = ceil($jumlah_mahasiswa / $capacity);
 
             // Cari ruangan yang tersedia dan tidak bertabrakan dengan jadwal lain
@@ -81,6 +75,7 @@ class Pemetaan extends Model
                                 });
                         });
                 })
+                ->orderByRaw("CAST(REPLACE(nama_ruangan, 'RD', '') AS UNSIGNED) ASC") // Urutkan berdasarkan angka setelah RD
                 ->take($neededRooms)
                 ->get();
 
@@ -88,7 +83,7 @@ class Pemetaan extends Model
                 return redirect()->back()->withErrors(['rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.']);
             }
 
-            
+            // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
             JadwalRuangan::where('pemetaan_id', $this->id)->delete();
 
             foreach ($availableRooms as $room) {
@@ -98,7 +93,7 @@ class Pemetaan extends Model
                 ]);
             }
         } elseif ($jenis_ruangan === 'RK' || $jenis_ruangan === 'Seminar') {
-            // Untuk jenis ruangan RK atau Seminar
+            // Untuk jenis ruangan RK atau Seminar, pastikan pengurutan sesuai
             $availableRoom = Ruangan::where('jenis_ruangan', $jenis_ruangan)
                 ->whereNotIn('id', function ($query) use ($jam_masuk, $jam_keluar, $hari) {
                     $query->select('ruangan_id')
@@ -114,10 +109,10 @@ class Pemetaan extends Model
                                 });
                         });
                 })
+                ->orderByRaw("CAST(REPLACE(nama_ruangan, 'RK', '') AS UNSIGNED) ASC") // Urutkan berdasarkan angka setelah RK
                 ->first();
 
             if ($availableRoom) {
-                // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
                 JadwalRuangan::where('pemetaan_id', $this->id)->delete();
                 JadwalRuangan::create([
                     'pemetaan_id' => $this->id,
@@ -128,6 +123,8 @@ class Pemetaan extends Model
             }
         }
     }
+
+
 
 
     public function updateJadwalRuangan()

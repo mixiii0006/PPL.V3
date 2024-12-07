@@ -56,6 +56,7 @@ class PemetaanMKController extends Controller
     // Ambil data pemetaan berdasarkan ID
     $datas = Pemetaan::findOrFail($id);
 
+
     // Validasi data
     $validated = $request->validate([
         'dosen_id' => 'required|exists:dosens,id',
@@ -68,6 +69,7 @@ class PemetaanMKController extends Controller
         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
         'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
     ]);
+
 
     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
     if ($validated['jenis_ruangan'] === 'RD') {
@@ -172,6 +174,7 @@ public function importCSV(Request $request)
 
         // Pastikan jadwal langsung dibuat setelah pemetaan dibuat
         $pemetaan->createJadwalRuangan();
+
     }
 
     if (!empty($errorRows)) {
