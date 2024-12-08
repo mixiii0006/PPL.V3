@@ -26,7 +26,7 @@ class DataRuanganController extends Controller
 
         Ruangan::create($validated);
 
-        return redirect()->route('data_ruangan.index')->with('success', 'Data created successfully!');
+        return redirect()->route('data_ruangan.index')->with('success', 'Data Ruangan berhasil dibuat!');
     }
 
     public function update(Request $request, string $id)

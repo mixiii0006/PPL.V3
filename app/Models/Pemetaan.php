@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\ValidationException;
 
 class Pemetaan extends Model
 {
@@ -184,7 +185,10 @@ class Pemetaan extends Model
                     Log::info('Available rooms: ' . $availableRooms->count());
 
                 if ($availableRooms->count() < $neededRooms) {
-                    return redirect()->back()->withErrors(['rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.']);
+                     // Lemparkan pengecualian jika tidak cukup ruangan
+                        throw ValidationException::withMessages([
+                            'rooms' => 'Tidak cukup ruangan RD tersedia untuk jumlah mahasiswa.'
+                        ]);
                 }
 
                 // Hapus jadwal lama jika ada dan buat jadwal baru di tabel jadwal_ruangan
@@ -245,7 +249,9 @@ class Pemetaan extends Model
                     ]);
 
                 } else {
-                    return redirect()->back()->withErrors(['rooms' => 'Tidak ada ruangan RK atau Seminar yang tersedia pada jam dan hari ini.']);
+                    throw ValidationException::withMessages([
+                        'rooms' => 'Tidak ada ruangan RK atau Seminar yang tersedia pada jam dan hari ini.'
+                    ]);
                 }
             }
         }

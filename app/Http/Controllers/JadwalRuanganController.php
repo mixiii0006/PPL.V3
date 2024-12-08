@@ -17,12 +17,13 @@ class JadwalRuanganController extends Controller
     {
         $search = $request->input('search');
 
-        // Hapus jadwal lama pada tabel jadwal_ruangans berdasarkan tanggal selesai
+        
         JadwalRuangan::whereIn('pemetaan_id', function ($query) {
             $query->select('id')
                 ->from('pemetaans')
-                ->whereDate('tanggal_selesai', '<', now());
-        })->delete();
+                ->whereDate('tanggal_mulai', '<=', now()) // Jadwal sudah mulai
+                ->whereDate('tanggal_selesai', '>=', now()); // Jadwal belum selesai
+        })->get();
 
         $user = Auth::user();
 

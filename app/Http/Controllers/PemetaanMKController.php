@@ -46,6 +46,15 @@ class PemetaanMKController extends Controller
             $validated['jumlah_mahasiswa'] = null;
         }
 
+        try {
+            // Memanggil fungsi untuk membuat jadwal ruangan setelah validasi sukses
+            $pemetaan = Pemetaan::create($validated);
+            $pemetaan->createJadwalRuangan();  // Menambahkan jadwal ruangan ke pemetaan
+
+        } catch (ValidationException $e) {
+            // Menangkap exception dari model dan mengembalikan pesan error ke halaman
+            return redirect()->back()->withErrors($e->errors())->withInput();
+        }
 
         Pemetaan::create($validated);
 
@@ -59,7 +68,7 @@ class PemetaanMKController extends Controller
 
 
     // Validasi data
-   
+
         $validated = $request->validate([
             'dosen_id' => 'required|exists:dosens,id',
             'matakuliah_id' => 'required|exists:mata_kuliahs,id',
@@ -103,7 +112,7 @@ public function delete(Pemetaan $datas)
 public function destroy($id){
     $datas = Pemetaan::findorfail($id);
     $datas->delete();
-    return redirect('/pemetaan_mk');
+    return redirect('/pemetaan_mk')->with('success', 'Data berhasil dihapus.');
 }
 
 public function importCSV(Request $request)
@@ -184,7 +193,8 @@ public function importCSV(Request $request)
         return back()->with('errors', $errorRows)->with('success', 'Sebagian data berhasil diimpor.');
     }
 
-    return back()->with('success', 'Semua data berhasil diimpor.');
+    return redirect('/pemetaan_mk')->with('success', 'Semua data berhasil diimpor.');
+
 }
 
 

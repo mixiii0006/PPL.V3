@@ -32,7 +32,7 @@ class DosenController extends Controller
         Dosen::create($validated);
 
         // Redirect ke halaman index
-        return redirect()->route('data_dosen.index')->with('success', 'Data created successfully!');
+        return redirect()->route('data_dosen.index')->with('success', 'Data Dosen berhasil dibuat!');
     }
 
     public function edit($id)

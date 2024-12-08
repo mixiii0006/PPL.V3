@@ -15,7 +15,7 @@ class MataKuliahController extends Controller
 
     public function store(Request $request)
     {
-       
+
         $validated = $request->validate([
 
             'nama_matakuliah' => 'required|string|max:100',
@@ -27,7 +27,7 @@ class MataKuliahController extends Controller
 
         MataKuliah::create($validated);
 
-        return redirect()->route('data_mk.index')->with('success', 'Data created successfully!');
+        return redirect()->route('data_mk.index')->with('success', 'Data Modul berhasil dibuat!');
     }
 
     public function update(Request $request, string $id)
@@ -44,7 +44,7 @@ class MataKuliahController extends Controller
         ]);
 
         $MataKuliah->update($request->all());
-        return redirect(route('data_mk.index'))->with('success', 'Data MataKuliah berhasil diperbarui.');
+        return redirect(route('data_mk.index'))->with('success', 'Data Modul berhasil diperbarui.');
     }
 
 

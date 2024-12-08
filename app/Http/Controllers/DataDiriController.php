@@ -61,7 +61,7 @@ class DataDiriController extends Controller
 
         User::create($validated);
 
-        return redirect(route('data_diri.index'))->with('success', 'User created successfully!');
+        return redirect(route('data_diri.index'))->with('success', ' Data Pengguna berhasil dibuat!');
     }
 
 
@@ -75,7 +75,7 @@ class DataDiriController extends Controller
         ]);
         $datas = User::find($id);
         $datas->update($request->all());
-        return redirect(route('data_diri.index'))->with('success', 'Berhasil Dihapus');
+        return redirect(route('data_diri.index'))->with('success', 'Data Pengguna berhasil diperbarui.');
     }
 
     public function delete(User $datas)
