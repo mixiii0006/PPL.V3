@@ -7,6 +7,7 @@ use App\Models\Dosen;
 use App\Models\MataKuliah;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
 class PemetaanMKController extends Controller
@@ -58,17 +59,19 @@ class PemetaanMKController extends Controller
 
 
     // Validasi data
-    $validated = $request->validate([
-        'dosen_id' => 'required|exists:dosens,id',
-        'matakuliah_id' => 'required|exists:mata_kuliahs,id',
-        'nama_modul' => 'required|string|max:255',
-        'hari' => 'required|string|max:10',
-        'jam_mulai' => 'required|date_format:H:i',
-        'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-        'tanggal_mulai' => 'required|date',
-        'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-        'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
-    ]);
+   
+        $validated = $request->validate([
+            'dosen_id' => 'required|exists:dosens,id',
+            'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+            'nama_modul' => 'required|string|max:255',
+            'hari' => 'required|string|max:10',
+            'jam_mulai' => 'required|date_format:H:i',
+            'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+            'tanggal_mulai' => 'required|date',
+            'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+            'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
+        ]);
+
 
 
     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
@@ -173,7 +176,7 @@ public function importCSV(Request $request)
         ]);
 
         // Pastikan jadwal langsung dibuat setelah pemetaan dibuat
-        $pemetaan->createJadwalRuangan();
+        // $pemetaan->createJadwalRuangan();
 
     }
 

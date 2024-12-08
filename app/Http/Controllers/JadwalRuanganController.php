@@ -208,6 +208,10 @@ class JadwalRuanganController extends Controller
         $user = Auth::user();
         // Ambil data jadwal berdasarkan hari
         $datas = JadwalRuangan::with(['ruangan', 'pemetaan.mata_kuliah', 'pemetaan.dosen'])
+            ->whereHas('pemetaan', function ($query) {
+                $query->whereDate('tanggal_mulai', '<=', now())
+                    ->whereDate('tanggal_selesai', '>=', now());
+            })
             ->when($user->email, function ($query) use ($user) {
                 // Periksa apakah ada dosen dengan NIP sesuai email
                 $hasDosen = Dosen::where('NIP', $user->email)->exists();
@@ -235,7 +239,75 @@ class JadwalRuanganController extends Controller
         // Tampilkan view dengan data jadwal yang sesuai
         return view('jadwal_ruangan.index', compact('dosen','datas', 'day','pemetaan', 'matakuliah','ruangan'));
     }
-    public function filterJadwal(Request $request)
+//     public function filterJadwal(Request $request)
+// {
+//     // Ambil data dari input request
+//     $selectedRuanganIds = $request->input('ruangan_ids', []); // Filter ID ruangan
+//     $selectedMataKuliahIds = $request->input('mata_kuliah_ids', []); // Filter ID mata kuliah
+//     $selectedHari = $request->input('hari'); // Filter hari
+
+//     // Mulai query jadwal ruangan
+//     $query = JadwalRuangan::query();
+
+//     // Ambil user yang sedang login
+//     $user = Auth::user();
+
+//     // Tambahkan filter berdasarkan email (untuk cek NIP dosen)
+//     $query->when($user->email, function ($query) use ($user) {
+//         // Periksa apakah ada dosen dengan NIP sesuai email
+//         $hasDosen = Dosen::where('NIP', $user->email)->exists();
+
+//         if ($hasDosen) {
+//             // Jika email cocok dengan NIP dosen, filter berdasarkan NIP
+//             $query->whereHas('pemetaan.dosen', function ($q) use ($user) {
+//                 $q->where('nip', $user->email);
+//             });
+//         }
+//         // Jika tidak cocok, jangan tambahkan filter, tampilkan semua jadwal
+//     });
+
+//     // Filter berdasarkan ID ruangan yang dipilih
+//     if (!empty($selectedRuanganIds)) {
+//         $query->whereIn('ruangan_id', $selectedRuanganIds);
+//     }
+
+//     // Gabungkan jadwal dengan tabel pemetaan dan mata kuliah
+//     $query->whereHas('pemetaan', function ($pemetaanQuery) use ($selectedMataKuliahIds, $selectedHari) {
+//         // Filter hanya jadwal yang masih berlangsung
+//         $pemetaanQuery->whereDate('tanggal_mulai', '<=', now())
+//                     ->whereDate('tanggal_selesai', '>=', now());
+
+//         // Filter berdasarkan hari
+//         if (!empty($selectedHari)) {
+//             $pemetaanQuery->where('hari', $selectedHari);
+//         }
+
+//         // Filter berdasarkan ID mata kuliah (dari relasi mata_kuliah)
+//         if (!empty($selectedMataKuliahIds)) {
+//             $pemetaanQuery->whereHas('mata_kuliah', function ($mataKuliahQuery) use ($selectedMataKuliahIds) {
+//                 $mataKuliahQuery->whereIn('id', $selectedMataKuliahIds);
+//             });
+//         }
+//     });
+
+//     // Ambil data jadwal yang sudah difilter
+//     $datas = $query->get();
+
+//     // Ambil daftar ruangan untuk form filter
+//     $ruangan = Ruangan::all();
+
+//     // Ambil daftar mata kuliah untuk form filter
+//     $matakuliah = MataKuliah::all();
+
+//     // Ambil seluruh data pemetaan dengan relasi mata_kuliah dan dosen
+//     $pemetaan = Pemetaan::with(['mata_kuliah', 'dosen'])->get();
+//     $dosen = Dosen::all();
+
+//     // Kembalikan view dengan data jadwal yang sudah difilter
+//     return view('jadwal_ruangan.index', compact('ruangan', 'datas', 'matakuliah', 'pemetaan','dosen'));
+// }
+
+public function filterJadwal(Request $request)
 {
     // Ambil data dari input request
     $selectedRuanganIds = $request->input('ruangan_ids', []); // Filter ID ruangan
@@ -284,6 +356,12 @@ class JadwalRuanganController extends Controller
                 $mataKuliahQuery->whereIn('id', $selectedMataKuliahIds);
             });
         }
+    })
+    // Tambahkan filter untuk memastikan bahwa tanggal mulai dan selesai jadwal sesuai dengan kondisi yang relevan
+    ->whereHas('pemetaan', function ($query) {
+        // Filter untuk memastikan tanggal mulai dan selesai sesuai dengan rentang yang valid
+        $query->whereDate('tanggal_mulai', '<=', now())
+              ->whereDate('tanggal_selesai', '>=', now());
     });
 
     // Ambil data jadwal yang sudah difilter
@@ -302,6 +380,7 @@ class JadwalRuanganController extends Controller
     // Kembalikan view dengan data jadwal yang sudah difilter
     return view('jadwal_ruangan.index', compact('ruangan', 'datas', 'matakuliah', 'pemetaan','dosen'));
 }
+
 
 
 public function printJadwalPDF(Request $request)
