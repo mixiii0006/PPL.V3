@@ -1,4 +1,20 @@
 <x-app-layout>
+    @if ($errors->has('rooms'))
+    <div class="alert alert-danger">
+        {{ $errors->first('rooms') }}
+    </div>
+    @endif
+
+    @if ($errors->any())
+        <div class="text-red-500">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
 
     <section class="bg-gray-50 dark:bg-gray-900 p-3 sm:p-5 ">
         <h2 class="mb-8 text-3xl tracking-tight font-extrabold text-blue-500 dark:text-blue-500">Jadwal Matakuliah</h2>

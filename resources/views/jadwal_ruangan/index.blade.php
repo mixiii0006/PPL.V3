@@ -9,6 +9,13 @@
             </ul>
         </div>
     @endif
+
+    @if ($errors->has('rooms'))
+    <div class="alert alert-danger">
+        {{ $errors->first('rooms') }}
+    </div>
+    @endif
+
     <section class="bg-white py-3 antialiased dark:bg-gray-900 md:pb-4">
         <div class="py-5 px-4 mx-auto max-w-screen-xl lg:py-5 lg:px-6">
           <!-- Heading & Filters -->
@@ -44,8 +51,6 @@
                         </a>
                     @endforeach
                   </div>
-
-
               </div>
             </div>
 
@@ -60,8 +65,6 @@
                   <path stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="m19 9-7 7-7-7" />
                 </svg>
               </button>
-
-
 
               <button data-modal-toggle="filterModal" data-modal-target="filterModal" type="button" class="flex w-full items-center justify-center rounded-lg border border-gray-200 bg-white px-3 py-2 text-sm font-medium text-gray-900 hover:bg-gray-100 hover:text-primary-700 focus:z-10 focus:outline-none focus:ring-4 focus:ring-gray-100 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-white dark:focus:ring-gray-700 sm:w-auto">
                 <svg class="-ms-0.5 me-2 h-4 w-4" aria-hidden="true" xmlns="http://www.w3.org/2000/svg" width="24" height="24" fill="none" viewBox="0 0 24 24">
@@ -113,11 +116,6 @@
                         <td class="pr-2">:</td>
                         <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jam_mulai }} s.d. {{ $data->pemetaan->jam_selesai }}</td>
                     </tr>
-                    {{-- <tr>
-                        <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jam Keluar</a></td>
-                        <td class="pr-2">:</td>
-                        <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jam_selesai }}</td>
-                    </tr> --}}
                     <tr>
                         <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Hari</a></td>
                         <td class="pr-2">:</td>
@@ -161,9 +159,10 @@
                 </div>
               </div>
 
-            <x-hapus :id="$data->id" :route="route('jadwal_ruangan.destroy', $data->id)"/>
+            {{-- <x-hapus :id="$data->id" :route="route('jadwal_ruangan.destroy', $data->id)"/> --}}
+                </div>
 
-                <div id="{{$data->id}}-updateProductModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden   bg-gray-500 bg-opacity-25 fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+                {{-- <div id="{{$data->id}}-updateProductModal" tabindex="-1" aria-hidden="true" class="hidden overflow-y-auto overflow-x-hidden   bg-gray-500 bg-opacity-25 fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
                     <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
                         <!-- Modal content -->
                         <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
@@ -230,7 +229,7 @@
                             </form>
                         </div>
                     </div>
-                </div>
+                </div> --}}
 
                 <div id="{{$data->id}}-readProductModal" tabindex="-1" aria-hidden="true" class="hidden  bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
                     <div class="relative p-4 w-full max-w-xl h-full md:h-auto">
@@ -314,10 +313,6 @@
                 </div>
 
             <script>
-                    document.addEventListener("DOMContentLoaded", function(event) {
-                    document.getElementById('{{$data->id}}-editButton ').click();
-                    });
-
                     document.addEventListener("DOMContentLoaded", function(event) {
                     document.getElementById('{{$data->id}}-readProductButton').click();
                     });

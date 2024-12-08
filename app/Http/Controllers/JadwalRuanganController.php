@@ -177,31 +177,31 @@ class JadwalRuanganController extends Controller
     // }
 
 
-    public function update(Request $request, string $id)
-    {
+    // public function update(Request $request, string $id)
+    // {
 
-        $datas = JadwalRuangan::findOrFail($id);
+    //     $datas = JadwalRuangan::findOrFail($id);
 
-        $request->validate([
-                'pemetaan_id' => 'required|exists:pemetaans,id',
-                'ruangan_id' => 'required|exists:ruangans,id',
-        ]);
+    //     $request->validate([
+    //             'pemetaan_id' => 'required|exists:pemetaans,id',
+    //             'ruangan_id' => 'required|exists:ruangans,id',
+    //     ]);
 
-        $datas->update($request->all());
-        return redirect(route('jadwal_ruangan.index'))->with('success', 'Data JadwalRuangan berhasil diperbarui.');
-    }
+    //     $datas->update($request->all());
+    //     return redirect(route('jadwal_ruangan.index'))->with('success', 'Data JadwalRuangan berhasil diperbarui.');
+    // }
 
 
-    public function delete(JadwalRuangan $datas)
-    {
+    // public function delete(JadwalRuangan $datas)
+    // {
 
-        return view('jadwal_ruangan.hapus', compact('datas'));
-    }
-    public function destroy($id){
-        $datas = JadwalRuangan::findorfail($id);
-        $datas->delete();
-        return redirect('/jadwal_ruangan')->with('success', 'Berhasil Dihapus');
-    }
+    //     return view('jadwal_ruangan.hapus', compact('datas'));
+    // }
+    // public function destroy($id){
+    //     $datas = JadwalRuangan::findorfail($id);
+    //     $datas->delete();
+    //     return redirect('/jadwal_ruangan')->with('success', 'Berhasil Dihapus');
+    // }
 
     public function show($day)
     {
