@@ -26,7 +26,7 @@
             </div>
         @endif
         <div class="py-5 px-4 mx-auto max-w-screen-xl lg:py-5 lg:px-6">
-          <!-- Heading & Filters -->
+         
           <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8 ">
             <div>
               <nav class="flex mb-4" aria-label="Breadcrumb">
