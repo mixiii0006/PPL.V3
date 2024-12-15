@@ -24,7 +24,7 @@
 
             </div>
         @endif
-        <h2 class="mb-8 text-3xl tracking-tight font-extrabold text-blue-500 dark:text-blue-500">Jadwal Matakuliah</h2>
+        <h2 class="mb-8 text-3xl tracking-tight font-extrabold text-blue-500 dark:text-blue-500">Pemetaan Matakuliah</h2>
             <!-- Start coding here -->
             <div class="bg-white dark:bg-gray-800 relative shadow-md sm:rounded-lg overflow-hidden">
                 <div class="flex flex-col md:flex-row items-center justify-between space-y-3 md:space-y-0 md:space-x-4 p-4">
