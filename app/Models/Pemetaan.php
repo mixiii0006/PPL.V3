@@ -30,7 +30,7 @@ class Pemetaan extends Model
     protected static function booted()
     {
         static::created(function ($pemetaan) {
-            // Setelah pemetaan dibuat, langsung buat jadwal ruangan
+           
             $pemetaan->createJadwalRuangan();
         });
 
