@@ -26,7 +26,7 @@
             </div>
         @endif
         <div class="py-5 px-4 mx-auto max-w-screen-xl lg:py-5 lg:px-6">
-         
+
           <div class="mb-4 items-end justify-between space-y-4 sm:flex sm:space-y-0 md:mb-8 ">
             <div>
               <nav class="flex mb-4" aria-label="Breadcrumb">
@@ -297,11 +297,7 @@
                                             <td class="pr-2">:</td>
                                             <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->hari }}</td>
                                         </tr>
-                                        {{-- <tr>
-                                            <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Jumlah Mahasiwa</a></td>
-                                            <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
-                                            <td class="text-sm font-normal leading-tight text-gray-900 hover:underline dark:text-white">{{ $data->pemetaan->jumlah_mahasiswa }}</td>
-                                        </tr> --}}
+                                     
                                         <tr>
                                             <td class="pr-4"><a href="#" class="text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">Kapasitas </a></td>
                                             <td class="pr-2 text-sm font-semibold leading-tight text-gray-900 hover:underline dark:text-white">:</td>
@@ -350,13 +346,13 @@
                         <div class="grid grid-cols-2 gap-4" id="filters" role="tabpanel" aria-labelledby="filters-tab">
                             <!-- Pilihan Mata Kuliah -->
                             <div class="space-y-2 mb-4">
-                                <h5 class="text-sm font-medium uppercase text-blue-500">Mata Kuliah</h5>
+                                <h5 class="text-sm font-medium uppercase text-blue-500">Modul</h5>
                                 <div class="flex items-center">
                                     <select
                                         name="mata_kuliah"
                                         id="mata_kuliah"
                                         class="w-full h-12 p-2 rounded-lg border-gray-300 bg-gray-100 text-gray-900 focus:ring-2 focus:ring-primary-500 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-300 dark:focus:ring-primary-600">
-                                        <option value=""> Semua Mata Kuliah</option>
+                                        <option value=""> Semua Modul</option>
                                         @foreach ($matakuliah as $mk)
                                             <option value="{{ $mk->id }}">{{ $mk->nama_matakuliah }}</option>
                                         @endforeach
