@@ -6,6 +6,7 @@ use App\Http\Controllers\DataRuanganController;
 use App\Http\Controllers\DosenController;
 use App\Http\Controllers\JadwalDosenController;
 use App\Http\Controllers\JadwalRuanganController;
+use App\Http\Controllers\LogRuangController;
 use App\Http\Controllers\MataKuliahController;
 use App\Http\Controllers\PemetaanMKController;
 use illuminate\Support\Facades\Auth;
@@ -39,6 +40,7 @@ Route::middleware('roles:admin,operator')->group(function () {
     Route::resource('data_mk', MataKuliahController::class);
     Route::resource('data_ruangan', DataRuanganController::class);
     Route::resource('pemetaan_mk', PemetaanMKController::class);
+    Route::resource('log_ruangan', LogRuangController::class);
 });
 
 Route::middleware('roles:admin,operator,user')->group(function () {
