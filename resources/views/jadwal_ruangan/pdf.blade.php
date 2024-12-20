@@ -22,7 +22,7 @@
     </style>
 </head>
 <body>
-    <h2 class="text-center text-lg font-bold">Jadwal Ruangan</h2>
+    <h2 class="text-center text-lg font-bold">Jadwal FKIK</h2>
 
     <table>
         <thead>
