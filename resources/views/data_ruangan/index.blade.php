@@ -57,7 +57,7 @@
                         <thead class="text-xs text-gray-700 uppercase bg-gray-50 dark:bg-gray-700 dark:text-gray-400">
                             <tr>
                                 <th scope="col" class="px-4 py-3">NO</th>
-                                <th scope="col" class="px-4 py-3">Ruanggan</th>
+                                <th scope="col" class="px-4 py-3">Ruangan</th>
                                 <th scope="col" class="px-4 py-3">Kapasitas</th>
                                 <th scope="col" class="px-4 py-3">Fasilitas</th>
                                 <th scope="col" class="px-4 py-3">Jenis Ruangan</th>

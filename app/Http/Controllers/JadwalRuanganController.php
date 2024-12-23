@@ -17,7 +17,7 @@ class JadwalRuanganController extends Controller
     {
         $search = $request->input('search');
 
-        
+
         JadwalRuangan::whereIn('pemetaan_id', function ($query) {
             $query->select('id')
                 ->from('pemetaans')
@@ -388,6 +388,8 @@ public function printJadwalPDF(Request $request)
 {
     $mataKuliahId = $request->input('mata_kuliah');
     $dosenId = $request->input('dosen');
+    $hari = $request->input('hari');
+    $ruanganId = $request->input('ruangan');
 
     $query = JadwalRuangan::query();
 
@@ -397,11 +399,20 @@ public function printJadwalPDF(Request $request)
             $q->where('id', $mataKuliahId);
         });
     }
-
+    if (!empty($ruanganId)) {
+        $query->whereHas('ruangan', function ($q) use ($ruanganId) {
+            $q->where('id', $ruanganId);
+        });
+    }
     // Filter berdasarkan dosen
     if (!empty($dosenId)) {
         $query->whereHas('pemetaan.dosen', function ($q) use ($dosenId) {
             $q->where('id', $dosenId);
+        });
+    }
+    if (!empty($hari)) {
+        $query->whereHas('pemetaan', function ($q) use ($hari) {
+            $q->where('hari', $hari);
         });
     }
 
@@ -419,6 +430,46 @@ public function printJadwalPDF(Request $request)
     // Download PDF
     return $pdf->download('jadwal_ruangan.pdf');
 }
+
+// public function store(Request $request)
+// {
+//     // Validasi data yang diterima dari form modal
+//     $validated = $request->validate([
+//         'ruangan_id' => 'required|exists:ruangans,id',
+//     ]);
+
+//     // Ambil data pemetaan terakhir yang baru saja ditambahkan atau diperbarui
+//     $pemetaan = Pemetaan::latest()->first();
+
+//     // Buat jadwal ruangan untuk pemetaan
+//     JadwalRuangan::create([
+//         'pemetaan_id' => $pemetaan->id,
+//         'ruangan_id' => $validated['ruangan_id'],
+//     ]);
+
+//     // Redirect setelah sukses
+//     return redirect()->route('log_ruangan.index')->with('success', 'Jadwal Ruangan berhasil ditambahkan!');
+// }
+
+public function store(Request $request)
+{
+    // Validate the incoming request
+    $validated = $request->validate([
+        'pemetaan_id' => 'required|exists:pemetaan,id',
+        'ruangan_id' => 'required|exists:ruangans,id',
+    ]);
+
+    // Store the jadwal (schedule) entry
+    JadwalRuangan::create([
+        'pemetaan_id' => $request->pemetaan_id,
+        'ruangan_id' => $request->ruangan_id,
+        // Other fields like hari, jam_mulai, etc. can be added here
+    ]);
+
+    return redirect()->route('log_ruangan.index')->with('success', 'Jadwal Ruangan berhasil disimpan!');
+}
+
+
 
 
 }

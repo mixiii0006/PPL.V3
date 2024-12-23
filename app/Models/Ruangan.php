@@ -22,4 +22,22 @@ class Ruangan extends Model
     {
         return $this->hasMany(JadwalRuangan::class);
     }
+
+    public function jadwalRuangan()
+    {
+        return $this->hasMany(JadwalRuangan::class, 'ruangan_id');
+    }
+
+    public static function boot()
+    {
+        parent::boot();
+
+        // Hapus jadwal ruangan saat ruangan dihapus
+        static::deleting(function ($ruangan) {
+            // Hapus jadwal yang terkait dengan ruangan
+            $ruangan->jadwalRuangans->each(function ($jadwal) {
+                $jadwal->delete();
+            });
+        });
+    }
 }

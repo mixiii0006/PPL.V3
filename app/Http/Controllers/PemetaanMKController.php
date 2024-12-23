@@ -56,7 +56,7 @@ class PemetaanMKController extends Controller
             return redirect()->back()->withErrors($e->errors())->withInput();
         }
 
-        Pemetaan::create($validated);
+        // Pemetaan::create($validated);
 
         return redirect()->route('pemetaan_mk.index')->with('success', 'Data created successfully!');
     }
@@ -142,7 +142,7 @@ public function importCSV(Request $request)
         $matakuliah = MataKuliah::where('nama_matakuliah', $row['nama_modul'])->first();
 
         if (!$dosen || !$matakuliah) {
-            $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_matakuliah'];
+            $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_modul'];
             continue;
         }
 

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Validation\ValidationException;
@@ -29,16 +30,33 @@ class Pemetaan extends Model
     // Event untuk menyimpan jadwal ruangan secara otomatis
     protected static function booted()
     {
+        // static::created(function ($pemetaan) {
+        //     // Periksa apakah flag 'skip_create_jadwal' ada di session atau request
+        //     if (!session('skip_create_jadwal', false)) {
+        //         $pemetaan->createJadwalRuangan();
+        //     }
+        // });
+
+        // static::updated(function ($pemetaan) {
+        //     if (!session('skip_create_jadwal', false)) {
+        //         $pemetaan->updateJadwalRuangan();
+        //     }
+        // });
+
         static::created(function ($pemetaan) {
-           
-            $pemetaan->createJadwalRuangan();
+            // Periksa apakah flag 'skip_create_jadwal' ada di session atau request
+
+                $pemetaan->createJadwalRuangan();
+
         });
 
         static::updated(function ($pemetaan) {
-            // Setelah pemetaan diperbarui, update jadwal ruangan
-            $pemetaan->updateJadwalRuangan();
+
+                $pemetaan->updateJadwalRuangan();
+
         });
     }
+
 
     // public function createJadwalRuangan()
     // {
@@ -278,6 +296,12 @@ class Pemetaan extends Model
     {
         return $this->belongsTo(MataKuliah::class, 'matakuliah_id');
     }
+
+    public function jadwalRuangans(): HasMany
+    {
+        return $this->hasMany(JadwalRuangan::class);
+    }
+
 }
 
 

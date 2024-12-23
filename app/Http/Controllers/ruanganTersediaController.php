@@ -13,24 +13,174 @@ use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
 use Carbon\Carbon;
 
-class LogRuangController extends Controller
+class ruanganTersediaController extends Controller
 {
-    public function index()
-    {
-        // Ambil semua ruangan beserta jadwalnya
-        $ruangan = Ruangan::with(['jadwalRuangans.pemetaan'])->get();
+//     public function index(Request $request)
+// {
+//     // Ambil parameter hari atau gunakan hari ini sebagai default
+//     $hari = $request->input('hari', Carbon::now()->isoFormat('dddd'));
+//     $durasi = 50; // Durasi dalam menit
+//     $ruangan = Ruangan::all();
 
-        $datas = Pemetaan::with(['Dosen', 'mata_kuliah'])->get();
+//     $availableRooms = [];
 
-        // Ambil data mata kuliah dan dosen untuk keperluan tambahan (jika diperlukan)
-        $matakuliah = MataKuliah::all();
-        $pemetaan = Pemetaan::all();
-        $dosen = Dosen::all();
-        $ruangan = Ruangan::all();
+//     // Mulai perulangan untuk setiap ruangan
+//     foreach ($ruangan as $ruang) {
+//         // Ambil data jadwal ruangan dan relasi pemetaannya untuk hari yang dipilih
+//         $jadwalRuangan = JadwalRuangan::where('ruangan_id', $ruang->id)
+//             ->with(['pemetaan' => function ($query) use ($hari) {
+//                 $query->where('hari', $hari);
+//             }])
+//             ->get();
+
+//         // Filter hanya yang memiliki relasi pemetaan (jadwal yang ada)
+//         $jadwalPemetaan = $jadwalRuangan->filter(function ($jadwal) {
+//             return $jadwal->pemetaan !== null; // Pastikan pemetaan ada
+//         });
+
+//         // Urutkan berdasarkan jam_mulai
+//         $jadwalPemetaan = $jadwalPemetaan->sortBy(function ($jadwal) {
+//             return $jadwal->pemetaan->jam_mulai;
+//         });
+
+//         // Cek slot waktu yang tersedia
+//         $availableSlots = [];
+//         $lastEndTime = "08:00:00"; // Awal hari (bisa disesuaikan dengan waktu operasional)
+
+//         // Looping untuk setiap jadwal pemetaan untuk mencari slot kosong
+//         foreach ($jadwalPemetaan as $jadwal) {
+//             // Hitung gap waktu antara jadwal sebelumnya dan jadwal saat ini
+//             $gap = (strtotime($jadwal->pemetaan->jam_mulai) - strtotime($lastEndTime)) / 60; // Konversi ke menit
+
+//             // Jika gap lebih besar atau sama dengan durasi yang diinginkan, slot tersedia
+//             if ($gap >= $durasi) {
+//                 $availableSlots[] = [
+//                     'start' => $lastEndTime,
+//                     'end' => date('H:i', strtotime($jadwal->pemetaan->jam_mulai)),
+//                 ];
+//             }
+//             dd($jadwalPemetaan, $availableSlots);
 
 
-        return view('log_ruangan.index', compact('ruangan', 'matakuliah', 'dosen', 'pemetaan', 'datas', 'ruangan'));
+//             // Update waktu akhir untuk slot berikutnya
+//             $lastEndTime = $jadwal->pemetaan->jam_selesai;
+//         }
+
+//         // Cek waktu setelah jadwal terakhir (misalnya sampai pukul 16:00:00)
+//         $endOfDay = "16:00:00"; // Akhir hari, bisa disesuaikan
+//         $gap = (strtotime($endOfDay) - strtotime($lastEndTime)) / 60; // Gap dalam menit
+
+//         // Jika gap setelah jadwal terakhir lebih besar atau sama dengan durasi, maka ada slot yang tersedia
+//         if ($gap >= $durasi) {
+//             $availableSlots[] = [
+//                 'start' => $lastEndTime,
+//                 'end' => date('H:i', strtotime($endOfDay)),
+//             ];
+//         }
+
+//         // Jika ada slot yang tersedia, tambahkan ke availableRooms
+//         if (!empty($availableSlots)) {
+//             $availableRooms[] = [
+//                 'ruangan' => $ruang->nama_ruangan, // Nama ruangan
+//                 'slots' => $availableSlots, // Slot waktu yang tersedia
+//             ];
+//         }
+//     }
+
+//     // Ambil data tambahan untuk view (misalnya, mata kuliah, dosen, pemetaan)
+//     $matakuliah = MataKuliah::all();
+//     $dosen = Dosen::all();
+//     $pemetaan = Pemetaan::all();
+
+//     // Kembalikan view dengan data yang diperlukan
+//     return view('ruangan_tersedia', compact('availableRooms', 'hari', 'durasi', 'matakuliah', 'dosen', 'pemetaan', 'ruangan'));
+// }
+
+
+public function index(Request $request)
+{
+    $matakuliah = MataKuliah::all();
+    $dosen = Dosen::all();
+    // Tentukan hari yang valid (Senin hingga Jumat)
+    $validDays = ['Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat'];
+
+    // Ambil hari dari query string atau set ke default jika tidak ada
+    $hari = $request->query('hari', $validDays[0]); // Default ke 'Senin' jika tidak ada
+
+    // Pastikan hari yang dipilih adalah salah satu dari Senin hingga Jumat
+    if (!in_array($hari, $validDays)) {
+        $hari = $validDays[0]; // Default ke Senin jika hari tidak valid
     }
+
+    $durasi = 50; // Durasi dalam menit
+    $ruangan = Ruangan::all();
+    $availableRooms = [];
+
+    // Perulangan untuk setiap ruangan
+    foreach ($ruangan as $ruang) {
+        $jadwalRuangan = JadwalRuangan::where('ruangan_id', $ruang->id)
+            ->with(['pemetaan' => function ($query) use ($hari) {
+                $query->where('hari', $hari);
+            }])
+            ->get();
+
+        // Filter hanya yang memiliki relasi pemetaan (jadwal yang ada)
+        $jadwalPemetaan = $jadwalRuangan->filter(function ($jadwal) {
+            return $jadwal->pemetaan !== null;
+        });
+
+        // Urutkan berdasarkan jam_mulai
+        $jadwalPemetaan = $jadwalPemetaan->sortBy(function ($jadwal) {
+            return $jadwal->pemetaan->jam_mulai;
+        });
+
+        // Cek slot waktu yang tersedia
+        $availableSlots = [];
+        $lastEndTime = "08:00"; // Awal hari
+
+        foreach ($jadwalPemetaan as $jadwal) {
+            // Menambah 10 menit pada waktu mulai dan mengurangi 10 menit pada waktu selesai
+            $startTime = date('H:i', strtotime($jadwal->pemetaan->jam_mulai) -600); // +10 menit
+            $endTime = date('H:i', strtotime($jadwal->pemetaan->jam_selesai) +600);// -10 menit
+
+            // Gap antara waktu terakhir dan waktu mulai baru
+            $gap = (strtotime($startTime) - strtotime($lastEndTime)) / 60; // Gap dalam menit
+            if ($gap >= $durasi) {
+                $availableSlots[] = [
+                    'start' => $lastEndTime,
+                    'end' => $startTime, // Waktu akhir slot ini
+                ];
+            }
+
+            $lastEndTime = $endTime; // Update last end time
+        }
+
+        // Cek waktu setelah jadwal terakhir
+        $endOfDay = "16:00"; // Akhir hari
+        $gap = (strtotime($endOfDay) - strtotime($lastEndTime)) / 60;
+        if ($gap >= $durasi) {
+            $availableSlots[] = [
+                'start' => $lastEndTime,
+                'end' => date('H:i', strtotime($endOfDay)),
+            ];
+        }
+
+        if (!empty($availableSlots)) {
+            $availableRooms[] = [
+                'ruangan' => $ruang->nama_ruangan,
+                'slots' => $availableSlots,
+            ];
+        }
+    }
+
+    // Kembalikan view dengan data yang diperlukan
+    return view('ruangan_tersedia', compact('availableRooms', 'hari', 'durasi', 'ruangan', 'dosen', 'matakuliah'));
+}
+
+
+
+
+
 
     public function show($day)
     {
@@ -50,9 +200,8 @@ class LogRuangController extends Controller
         $dosen = Dosen::all();
 
         // Tampilkan view dengan data jadwal yang sesuai
-        return view('log_ruangan.index', compact('dosen', 'ruangan', 'day', 'pemetaan', 'matakuliah'));
+        return view('ruangan_tersedia', compact('dosen', 'ruangan', 'day', 'pemetaan', 'matakuliah'));
     }
-
 
     public function store(Request $request)
     {
@@ -67,6 +216,7 @@ class LogRuangController extends Controller
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+            'ruangan_id' => 'required|exists:ruangans,id',
         ]);
 
         // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
@@ -85,13 +235,18 @@ class LogRuangController extends Controller
 
             // Cek jika input skip_create_jadwal ada
             if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
-                // Cari ruangan berdasarkan ID
-                $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
+                // Menggunakan ruangan_id langsung, tidak perlu mencari ruangan
+                $ruangan_id = $request->input('ruangan_id');
+
+                // Menghapus jadwal lama jika ada (kombinasi pemetaan_id dan ruangan_id yang sama)
+                JadwalRuangan::where('pemetaan_id', $pemetaan->id)
+                    ->where('ruangan_id', $ruangan_id)
+                    ->delete();
 
                 // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
                 $jadwal = new JadwalRuangan([
                     'pemetaan_id' => $pemetaan->id,
-                    'ruangan_id' => $ruangan->id,
+                    'ruangan_id' => $ruangan_id, // Langsung menggunakan ruangan_id
                 ]);
 
                 // Simpan jadwal ruangan
@@ -104,8 +259,70 @@ class LogRuangController extends Controller
         }
 
         // Redirect ke halaman log ruangan dengan pesan sukses
-        return redirect()->route('tambah_ruangan')->with('success', 'Data created successfully!');
+        return redirect()->route('ruangan_tersedia.index')->with('success', 'Jadwal berhasil ditambahkan!');
     }
+
+
+    // public function store(Request $request)
+    // {
+    //     // Validasi data
+    //     $validated = $request->validate([
+    //         'dosen_id' => 'required|exists:dosens,id',
+    //         'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //         'nama_modul' => 'required|string|max:255',
+    //         'hari' => 'required|string|max:10',
+    //         'jam_mulai' => 'required|date_format:H:i',
+    //         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //         'tanggal_mulai' => 'required|date',
+    //         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //         'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+    //     ]);
+
+    //     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
+    //     if ($validated['jenis_ruangan'] === 'RD') {
+    //         $validated['jumlah_mahasiswa'] = $request->validate([
+    //             'jumlah_mahasiswa' => 'required|integer|min:1',
+    //         ])['jumlah_mahasiswa'];
+    //     } else {
+    //         // Untuk RK atau Seminar, set jumlah_mahasiswa ke null
+    //         $validated['jumlah_mahasiswa'] = null;
+    //     }
+
+    //     try {
+    //         // Membuat pemetaan
+    //         $pemetaan = Pemetaan::create($validated);
+
+    //         // Cek jika input skip_create_jadwal ada
+    //         if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
+    //             // Cari ruangan berdasarkan ID
+    //             $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
+
+    //             // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
+    //             $jadwal = new JadwalRuangan([
+    //                 'pemetaan_id' => $pemetaan->id,
+    //                 'ruangan_id' => $ruangan->id,
+    //             ]);
+
+    //             // Simpan jadwal ruangan
+    //             $jadwal->save();
+    //         }
+
+    //     } catch (ValidationException $e) {
+    //         // Menangkap exception dari model dan mengembalikan pesan error
+    //         return redirect()->back()->withErrors($e->errors())->withInput();
+    //     }
+
+    //     // Redirect ke halaman log ruangan dengan pesan sukses
+    //     return redirect()->route('ruangan_tersedia.index')->with('success', 'Jadwal berhasil ditambahkan!');
+    //     // return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
+    //     // return redirect('/ruangan_tersedia')->with('success', 'Jadwal berhasil ditambahkan!');
+    //     // return view('ruangan_tersedia')->with('success', 'Jadwal berhasil ditambahkan!');
+
+
+
+    // }
+
+
     public function update(Request $request, $id)
     {
         // Validasi data input

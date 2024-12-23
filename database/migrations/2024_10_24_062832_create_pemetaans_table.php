@@ -21,7 +21,7 @@ return new class extends Migration
             $table->time('jam_selesai'); // Kolom untuk jam selesai
             $table->date('tanggal_mulai'); // Kolom untuk tanggal mulai
             $table->date('tanggal_selesai'); // Kolom untuk tanggal selesai
-            $table->string('jenis_ruangan'); // Kolom untuk jenis ruangan (misal: RD/RK)
+            $table->string('jenis_ruangan')->nullable(); // Kolom untuk jenis ruangan (misal: RD/RK)
             $table->integer('jumlah_mahasiswa')->nullable(); // Kolom jumlah mahasiswa, nullable jika tidak memilih RD
             $table->timestamps(); // created_at dan updated_at
         });
