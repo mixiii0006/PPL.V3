@@ -143,6 +143,54 @@ class tambahRuangController extends Controller
     //     return redirect()->route('tambah_ruangan.index')->with('success', 'Jadwal berhasil ditambahkan!');
     // }
 
+    // public function store(Request $request)
+    // {
+
+    //     // dd($request->all());
+    //     // Validasi data
+    //     $validated = $request->validate([
+    //         'dosen_id' => 'required|exists:dosens,id',
+    //         'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //         'nama_modul' => 'required|string|max:255',
+    //         'hari' => 'required|string|max:10',
+    //         'jam_mulai' => 'required|date_format:H:i',
+    //         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //         'tanggal_mulai' => 'required|date',
+    //         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //         'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+
+    //     ]);
+
+    //     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
+    //     if ($validated['jenis_ruangan'] === 'RD') {
+    //         $validated['jumlah_mahasiswa'] = $request->validate([
+    //             'jumlah_mahasiswa' => 'required|integer|min:1',
+    //         ])['jumlah_mahasiswa'];
+    //     } else {
+    //         // Untuk RK atau Seminar, set jumlah_mahasiswa ke null
+    //         $validated['jumlah_mahasiswa'] = null;
+    //     }
+
+
+    //     $pemetaan = Pemetaan::create($validated);
+
+    //     if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
+    //         // Cari ruangan berdasarkan ID
+    //         $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
+
+    //         // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
+    //         $jadwal = new JadwalRuangan([
+    //             'pemetaan_id' => $pemetaan->id,
+    //             'ruangan_id' => $ruangan->id,
+    //         ]);
+
+
+    //         // Simpan jadwal ruangan
+    //         $jadwal->save();
+    //         return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
+
+    //     }
+
     public function store(Request $request)
     {
         // Validasi data
@@ -156,7 +204,6 @@ class tambahRuangController extends Controller
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
-
         ]);
 
         // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
@@ -169,40 +216,46 @@ class tambahRuangController extends Controller
             $validated['jumlah_mahasiswa'] = null;
         }
 
-        try {
-            // Membuat pemetaan
-            $pemetaan = Pemetaan::create($validated);
+        // Buat pemetaan baru
+        $pemetaan = Pemetaan::create($validated);
 
-            // Cek jika input skip_create_jadwal ada
-            if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
-                // Cari ruangan berdasarkan ID
-                $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
+        if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
+            // Cari ruangan berdasarkan ID
+            $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
 
-                // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
-                $jadwal = new JadwalRuangan([
-                    'pemetaan_id' => $pemetaan->id,
-                    'ruangan_id' => $ruangan->id,
-                ]);
+            // Periksa apakah jadwal lama dengan pemetaan_id yang sama dan ruangan_id yang sama sudah ada
+            $existingJadwal = JadwalRuangan::where('pemetaan_id', $pemetaan->id)
+                ->where('ruangan_id', $ruangan->id)
+                ->first();
 
-                // Simpan jadwal ruangan
-                $jadwal->save();
+            // Jika ada jadwal lama, hapus
+            if ($existingJadwal) {
+                $existingJadwal->delete();
             }
 
-            // return redirect('/tambah-ruangan')->with('success', 'Jadwal berhasil ditambahkan!');
+            // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
+            $jadwal = new JadwalRuangan([
+                'pemetaan_id' => $pemetaan->id,
+                'ruangan_id' => $ruangan->id,
+            ]);
 
+            // Simpan jadwal ruangan
+            $jadwal->save();
 
-        } catch (ValidationException $e) {
-            // Menangkap exception dari model dan mengembalikan pesan error
-            return redirect()->back()->withErrors($e->errors())->withInput();
-
+            return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
         }
 
-        // Redirect ke halaman log ruangan dengan pesan sukses
-        // return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
-        // return redirect('/tambah_ruangan')->with('success', 'Jadwal berhasil ditambahkan!');
-        return redirect()->route('tambah_ruangan.index')->with('success', 'Jadwal berhasil ditambahkan!');
-
+        return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
     }
+
+
+
+
+    //     return redirect()->back()->with('success', 'Jadwal gagal ditambahkan karena skip create bukan 1');
+
+
+
+    // }
 
 
     // public function update(Request $request, $id)
@@ -269,67 +322,67 @@ class tambahRuangController extends Controller
     //     }
     // }
 
-//     public function store(Request $request)
-// {
-//     // Validasi input dari user
-//     $validated = $request->validate([
-//         'dosen_id' => 'required|exists:dosens,id',
-//         'matakuliah_id' => 'required|exists:mata_kuliahs,id',
-//         'nama_modul' => 'required|string|max:255',
-//         'hari' => 'required|string|max:10',
-//         'jam_mulai' => 'required|date_format:H:i',
-//         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-//         'tanggal_mulai' => 'required|date',
-//         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-//         'jenis_ruangan' => 'required|in:RD,RK,Seminar',
-//         'ruangan_id' => 'required|exists:ruangans,id',
-//     ]);
+    //     public function store(Request $request)
+    // {
+    //     // Validasi input dari user
+    //     $validated = $request->validate([
+    //         'dosen_id' => 'required|exists:dosens,id',
+    //         'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //         'nama_modul' => 'required|string|max:255',
+    //         'hari' => 'required|string|max:10',
+    //         'jam_mulai' => 'required|date_format:H:i',
+    //         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //         'tanggal_mulai' => 'required|date',
+    //         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //         'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+    //         'ruangan_id' => 'required|exists:ruangans,id',
+    //     ]);
 
-//     // Membuat entri baru di tabel Pemetaan
-//     $pemetaan = Pemetaan::create([
-//         'dosen_id' => $validated['dosen_id'],
-//         'matakuliah_id' => $validated['matakuliah_id'],
-//         'nama_modul' => $validated['nama_modul'],
-//         'hari' => $validated['hari'],
-//         'jam_mulai' => $validated['jam_mulai'],
-//         'jam_selesai' => $validated['jam_selesai'],
-//         'tanggal_mulai' => $validated['tanggal_mulai'],
-//         'tanggal_selesai' => $validated['tanggal_selesai'],
-//         'jenis_ruangan' => $validated['jenis_ruangan'],
-//     ]);
+    //     // Membuat entri baru di tabel Pemetaan
+    //     $pemetaan = Pemetaan::create([
+    //         'dosen_id' => $validated['dosen_id'],
+    //         'matakuliah_id' => $validated['matakuliah_id'],
+    //         'nama_modul' => $validated['nama_modul'],
+    //         'hari' => $validated['hari'],
+    //         'jam_mulai' => $validated['jam_mulai'],
+    //         'jam_selesai' => $validated['jam_selesai'],
+    //         'tanggal_mulai' => $validated['tanggal_mulai'],
+    //         'tanggal_selesai' => $validated['tanggal_selesai'],
+    //         'jenis_ruangan' => $validated['jenis_ruangan'],
+    //     ]);
 
-//     // Mencari ruangan yang tersedia berdasarkan jadwal
-//     $ruanganTersedia = Ruangan::whereDoesntHave('jadwalRuangan', function($query) use ($validated) {
-//         $query->where('hari', $validated['hari'])
-//               ->where(function ($q) use ($validated) {
-//                   $q->where('jam_mulai', '<', $validated['jam_selesai'])
-//                     ->where('jam_selesai', '>', $validated['jam_mulai']);
-//               });
-//     })->get();
+    //     // Mencari ruangan yang tersedia berdasarkan jadwal
+    //     $ruanganTersedia = Ruangan::whereDoesntHave('jadwalRuangan', function($query) use ($validated) {
+    //         $query->where('hari', $validated['hari'])
+    //               ->where(function ($q) use ($validated) {
+    //                   $q->where('jam_mulai', '<', $validated['jam_selesai'])
+    //                     ->where('jam_selesai', '>', $validated['jam_mulai']);
+    //               });
+    //     })->get();
 
-//     // Mendapatkan ruangan yang dipilih
-//     $ruanganSelected = Ruangan::find($validated['ruangan_id']);
+    //     // Mendapatkan ruangan yang dipilih
+    //     $ruanganSelected = Ruangan::find($validated['ruangan_id']);
 
-//     // Periksa apakah ruangan yang dipilih tersedia
-//     if (!$ruanganTersedia->contains('id', $ruanganSelected->id)) {
-//         return redirect()->back()->with('error', 'Ruangan tidak tersedia pada waktu yang dipilih.');
-//     }
+    //     // Periksa apakah ruangan yang dipilih tersedia
+    //     if (!$ruanganTersedia->contains('id', $ruanganSelected->id)) {
+    //         return redirect()->back()->with('error', 'Ruangan tidak tersedia pada waktu yang dipilih.');
+    //     }
 
-//     // Memeriksa apakah kita perlu membuat JadwalRuangan
-//     if (!$request->has('skip_create_jadwal') || $request->input('skip_create_jadwal') != 1) {
-//         // Membuat JadwalRuangan jika flag tidak diset atau tidak bernilai 1
-//         JadwalRuangan::create([
-//             'pemetaan_id' => $pemetaan->id,
-//             'ruangan_id' => $validated['ruangan_id'],
-//         ]);
+    //     // Memeriksa apakah kita perlu membuat JadwalRuangan
+    //     if (!$request->has('skip_create_jadwal') || $request->input('skip_create_jadwal') != 1) {
+    //         // Membuat JadwalRuangan jika flag tidak diset atau tidak bernilai 1
+    //         JadwalRuangan::create([
+    //             'pemetaan_id' => $pemetaan->id,
+    //             'ruangan_id' => $validated['ruangan_id'],
+    //         ]);
 
-//         // Kembali ke halaman dengan pesan sukses
-//         return redirect()->route('tambah_ruangan')->with('success', 'Pemetaan dan Jadwal berhasil dibuat!');
-//     }
+    //         // Kembali ke halaman dengan pesan sukses
+    //         return redirect()->route('tambah_ruangan')->with('success', 'Pemetaan dan Jadwal berhasil dibuat!');
+    //     }
 
-//     // Jika skip_create_jadwal diset ke 1, lewati pembuatan JadwalRuangan
-//     return redirect()->route('tambah_ruangan')->with('success', 'Pemetaan berhasil dibuat, jadwal dilewati!');
-// }
+    //     // Jika skip_create_jadwal diset ke 1, lewati pembuatan JadwalRuangan
+    //     return redirect()->route('tambah_ruangan')->with('success', 'Pemetaan berhasil dibuat, jadwal dilewati!');
+    // }
 
 
 
@@ -497,85 +550,85 @@ class tambahRuangController extends Controller
 
 
 
-//     public function store(Request $request)
-//     {
-//         // Validasi data
-//         $validated = $request->validate([
+    //     public function store(Request $request)
+    //     {
+    //         // Validasi data
+    //         $validated = $request->validate([
 
-//             'dosen_id' => 'required|exists:dosens,id',
-//             'matakuliah_id' => 'required|exists:mata_kuliahs,id',
-//             'nama_modul' => 'required|string|max:255',
-//             'hari' => 'required|string|max:10',
-//             'jam_mulai' => 'required|date_format:H:i',
-//             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-//             'tanggal_mulai' => 'required|date',
-//             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-//             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
-//             // 'jumlah_mahasiswa' => 'nullable|integer|min:1'
-//         ]);
+    //             'dosen_id' => 'required|exists:dosens,id',
+    //             'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //             'nama_modul' => 'required|string|max:255',
+    //             'hari' => 'required|string|max:10',
+    //             'jam_mulai' => 'required|date_format:H:i',
+    //             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //             'tanggal_mulai' => 'required|date',
+    //             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+    //             // 'jumlah_mahasiswa' => 'nullable|integer|min:1'
+    //         ]);
 
-//         if ($validated['jenis_ruangan'] === 'RD') {
-//             $validated['jumlah_mahasiswa'] = $request->validate([
-//                 'jumlah_mahasiswa' => 'required|integer|min:1',  // If RD, jumlah_mahasiswa must be provided
-//             ])['jumlah_mahasiswa'];
-//         } else {
-//             // For RK or Seminar, set jumlah_mahasiswa to null
-//             $validated['jumlah_mahasiswa'] = null;
-//         }
+    //         if ($validated['jenis_ruangan'] === 'RD') {
+    //             $validated['jumlah_mahasiswa'] = $request->validate([
+    //                 'jumlah_mahasiswa' => 'required|integer|min:1',  // If RD, jumlah_mahasiswa must be provided
+    //             ])['jumlah_mahasiswa'];
+    //         } else {
+    //             // For RK or Seminar, set jumlah_mahasiswa to null
+    //             $validated['jumlah_mahasiswa'] = null;
+    //         }
 
-//         try {
-//             // Memanggil fungsi untuk membuat jadwal ruangan setelah validasi sukses
-//             $pemetaan = Pemetaan::create($validated);
-//             // $pemetaan->createJadwalRuangan();  // Menambahkan jadwal ruangan ke pemetaan
+    //         try {
+    //             // Memanggil fungsi untuk membuat jadwal ruangan setelah validasi sukses
+    //             $pemetaan = Pemetaan::create($validated);
+    //             // $pemetaan->createJadwalRuangan();  // Menambahkan jadwal ruangan ke pemetaan
 
-//         } catch (ValidationException $e) {
-//             // Menangkap exception dari model dan mengembalikan pesan error ke halaman
-//             return redirect()->back()->withErrors($e->errors())->withInput();
-//         }
+    //         } catch (ValidationException $e) {
+    //             // Menangkap exception dari model dan mengembalikan pesan error ke halaman
+    //             return redirect()->back()->withErrors($e->errors())->withInput();
+    //         }
 
-//         // Pemetaan::create($validated);
+    //         // Pemetaan::create($validated);
 
-//         return redirect()->route('log_ruangan.index')->with('success', 'Data created successfully!');
-//     }
+    //         return redirect()->route('log_ruangan.index')->with('success', 'Data created successfully!');
+    //     }
 
-//     public function update(Request $request, string $id)
-// {
-//     // Ambil data pemetaan berdasarkan ID
-//     $datas = Pemetaan::findOrFail($id);
-
-
-//     // Validasi data
-
-//         $validated = $request->validate([
-//             'dosen_id' => 'required|exists:dosens,id',
-//             'matakuliah_id' => 'required|exists:mata_kuliahs,id',
-//             'nama_modul' => 'required|string|max:255',
-//             'hari' => 'required|string|max:10',
-//             'jam_mulai' => 'required|date_format:H:i',
-//             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-//             'tanggal_mulai' => 'required|date',
-//             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
-//             'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
-//         ]);
+    //     public function update(Request $request, string $id)
+    // {
+    //     // Ambil data pemetaan berdasarkan ID
+    //     $datas = Pemetaan::findOrFail($id);
 
 
+    //     // Validasi data
 
-//     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
-//     if ($validated['jenis_ruangan'] === 'RD') {
-//         $validated['jumlah_mahasiswa'] = $request->validate([
-//             'jumlah_mahasiswa' => 'required|integer|min:1',
-//         ])['jumlah_mahasiswa'];
-//     } else {
-//         // Jika jenis ruangan bukan RD, set jumlah_mahasiswa ke null
-//         $validated['jumlah_mahasiswa'] = null;
-//     }
+    //         $validated = $request->validate([
+    //             'dosen_id' => 'required|exists:dosens,id',
+    //             'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //             'nama_modul' => 'required|string|max:255',
+    //             'hari' => 'required|string|max:10',
+    //             'jam_mulai' => 'required|date_format:H:i',
+    //             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //             'tanggal_mulai' => 'required|date',
+    //             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //             'jenis_ruangan' => 'required|in:RD,RK,Seminar', // Hanya validasi untuk jenis ruangan
+    //         ]);
 
-//     // Perbarui data di tabel pemetaan
-//     $datas->update($validated);
 
-//     // Redirect dengan pesan sukses
-//     return redirect()->route('log_ruangan.index')->with('success', 'Data Pemetaan berhasil diperbarui.');
-// }
+
+    //     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
+    //     if ($validated['jenis_ruangan'] === 'RD') {
+    //         $validated['jumlah_mahasiswa'] = $request->validate([
+    //             'jumlah_mahasiswa' => 'required|integer|min:1',
+    //         ])['jumlah_mahasiswa'];
+    //     } else {
+    //         // Jika jenis ruangan bukan RD, set jumlah_mahasiswa ke null
+    //         $validated['jumlah_mahasiswa'] = null;
+    //     }
+
+    //     // Perbarui data di tabel pemetaan
+    //     $datas->update($validated);
+
+    //     // Redirect dengan pesan sukses
+    //     return redirect()->route('log_ruangan.index')->with('success', 'Data Pemetaan berhasil diperbarui.');
+    // }
 
 
     // public function store(Request $request)
@@ -834,7 +887,8 @@ class tambahRuangController extends Controller
     {
         return view('tambah_ruangan.hapus', compact('datas'));
     }
-    public function destroy($id){
+    public function destroy($id)
+    {
         $datas = Pemetaan::findorfail($id);
         $datas->delete();
         return redirect('/tambah_ruangan')->with('success', 'Data berhasil dihapus.');
@@ -842,86 +896,86 @@ class tambahRuangController extends Controller
 
 
 
-// public function importCSV(Request $request)
-// {
-//     $request->validate([
-//         'csv_file' => 'required|file|mimes:csv,txt|max:2048',
-//     ]);
+    // public function importCSV(Request $request)
+    // {
+    //     $request->validate([
+    //         'csv_file' => 'required|file|mimes:csv,txt|max:2048',
+    //     ]);
 
-//     $file = $request->file('csv_file');
-//     $path = $file->getRealPath();
+    //     $file = $request->file('csv_file');
+    //     $path = $file->getRealPath();
 
-//     // Membaca semua baris CSV
-//     $csvData = array_map(function ($line) {
-//         return str_getcsv($line, ';'); // Pisahkan berdasarkan pemisah ;
-//     }, file($path));
+    //     // Membaca semua baris CSV
+    //     $csvData = array_map(function ($line) {
+    //         return str_getcsv($line, ';'); // Pisahkan berdasarkan pemisah ;
+    //     }, file($path));
 
-//     // Ambil header (nama kolom) dan hapus dari data
-//     $header = array_shift($csvData);
+    //     // Ambil header (nama kolom) dan hapus dari data
+    //     $header = array_shift($csvData);
 
-//     $errorRows = [];
-//     foreach ($csvData as $key => $row) {
-//         // Gabungkan header dengan data agar lebih mudah diakses
-//         $row = array_combine($header, $row);
+    //     $errorRows = [];
+    //     foreach ($csvData as $key => $row) {
+    //         // Gabungkan header dengan data agar lebih mudah diakses
+    //         $row = array_combine($header, $row);
 
-//         // Cari ID berdasarkan nama dosen dan mata kuliah
-//         $dosen = Dosen::where('Nama', $row['nama_dosen'])->first();
-//         $matakuliah = MataKuliah::where('nama_matakuliah', $row['nama_modul'])->first();
+    //         // Cari ID berdasarkan nama dosen dan mata kuliah
+    //         $dosen = Dosen::where('Nama', $row['nama_dosen'])->first();
+    //         $matakuliah = MataKuliah::where('nama_matakuliah', $row['nama_modul'])->first();
 
-//         if (!$dosen || !$matakuliah) {
-//             $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_modul'];
-//             continue;
-//         }
+    //         if (!$dosen || !$matakuliah) {
+    //             $errorRows[$key + 1] = "Dosen atau Mata Kuliah tidak ditemukan: " . $row['nama_dosen'] . " / " . $row['nama_modul'];
+    //             continue;
+    //         }
 
-//         // Mengonversi tanggal ke format yang benar (Y-m-d)
-//         $tanggalMulai = Carbon::createFromFormat('d/m/Y', $row['tanggal_mulai'])->format('Y-m-d');
-//         $tanggalSelesai = Carbon::createFromFormat('d/m/Y', $row['tanggal_selesai'])->format('Y-m-d');
+    //         // Mengonversi tanggal ke format yang benar (Y-m-d)
+    //         $tanggalMulai = Carbon::createFromFormat('d/m/Y', $row['tanggal_mulai'])->format('Y-m-d');
+    //         $tanggalSelesai = Carbon::createFromFormat('d/m/Y', $row['tanggal_selesai'])->format('Y-m-d');
 
-//         // Validasi tanggal mulai dan selesai
-//         if (Carbon::parse($tanggalMulai)->gt(Carbon::parse($tanggalSelesai))) {
-//             $errorRows[$key + 1][] = "Tanggal mulai harus sebelum atau sama dengan tanggal selesai.";
-//             continue;
-//         }
+    //         // Validasi tanggal mulai dan selesai
+    //         if (Carbon::parse($tanggalMulai)->gt(Carbon::parse($tanggalSelesai))) {
+    //             $errorRows[$key + 1][] = "Tanggal mulai harus sebelum atau sama dengan tanggal selesai.";
+    //             continue;
+    //         }
 
-//         // Validasi data lainnya
-//         $validator = Validator::make($row, [
-//             'judul_kuliah' => 'required|string|max:255',
-//             'hari' => 'required|string|max:20',
-//             'jam_mulai' => 'required|date_format:H:i',
-//             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
-//             'jenis_ruangan' => 'required|string|in:RD,RK,Seminar',
-//             'jumlah_mahasiswa' => 'nullable|integer|min:0',
-//         ]);
+    //         // Validasi data lainnya
+    //         $validator = Validator::make($row, [
+    //             'judul_kuliah' => 'required|string|max:255',
+    //             'hari' => 'required|string|max:20',
+    //             'jam_mulai' => 'required|date_format:H:i',
+    //             'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //             'jenis_ruangan' => 'required|string|in:RD,RK,Seminar',
+    //             'jumlah_mahasiswa' => 'nullable|integer|min:0',
+    //         ]);
 
-//         if ($validator->fails()) {
-//             dd($validator->errors()->all());
-//         }
+    //         if ($validator->fails()) {
+    //             dd($validator->errors()->all());
+    //         }
 
-//         // Simpan data ke tabel `pemetaans`
-//         $pemetaan = Pemetaan::create([
-//             'dosen_id' => $dosen->id,
-//             'matakuliah_id' => $matakuliah->id,
-//             'nama_modul' => $row['judul_kuliah'],
-//             'hari' => $row['hari'],
-//             'jam_mulai' => $row['jam_mulai'],
-//             'jam_selesai' => $row['jam_selesai'],
-//             'tanggal_mulai' => $tanggalMulai, // Use the formatted date
-//             'tanggal_selesai' => $tanggalSelesai, // Use the formatted date
-//             'jenis_ruangan' => $row['jenis_ruangan'],
-//             'jumlah_mahasiswa' => $row['jumlah_mahasiswa'],
-//         ]);
+    //         // Simpan data ke tabel `pemetaans`
+    //         $pemetaan = Pemetaan::create([
+    //             'dosen_id' => $dosen->id,
+    //             'matakuliah_id' => $matakuliah->id,
+    //             'nama_modul' => $row['judul_kuliah'],
+    //             'hari' => $row['hari'],
+    //             'jam_mulai' => $row['jam_mulai'],
+    //             'jam_selesai' => $row['jam_selesai'],
+    //             'tanggal_mulai' => $tanggalMulai, // Use the formatted date
+    //             'tanggal_selesai' => $tanggalSelesai, // Use the formatted date
+    //             'jenis_ruangan' => $row['jenis_ruangan'],
+    //             'jumlah_mahasiswa' => $row['jumlah_mahasiswa'],
+    //         ]);
 
-//         // Pastikan jadwal langsung dibuat setelah pemetaan dibuat
-//         // $pemetaan->createJadwalRuangan();
+    //         // Pastikan jadwal langsung dibuat setelah pemetaan dibuat
+    //         // $pemetaan->createJadwalRuangan();
 
-//     }
+    //     }
 
-//     if (!empty($errorRows)) {
-//         return back()->with('errors', $errorRows)->with('success', 'Sebagian data berhasil diimpor.');
-//     }
+    //     if (!empty($errorRows)) {
+    //         return back()->with('errors', $errorRows)->with('success', 'Sebagian data berhasil diimpor.');
+    //     }
 
-//     return redirect('/pemetaan_mk')->with('success', 'Semua data berhasil diimpor.');
+    //     return redirect('/pemetaan_mk')->with('success', 'Semua data berhasil diimpor.');
 
-// }
+    // }
 
 }

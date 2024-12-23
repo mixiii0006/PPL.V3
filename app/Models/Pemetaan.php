@@ -30,31 +30,31 @@ class Pemetaan extends Model
     // Event untuk menyimpan jadwal ruangan secara otomatis
     protected static function booted()
     {
-        // static::created(function ($pemetaan) {
-        //     // Periksa apakah flag 'skip_create_jadwal' ada di session atau request
-        //     if (!session('skip_create_jadwal', false)) {
-        //         $pemetaan->createJadwalRuangan();
-        //     }
-        // });
-
-        // static::updated(function ($pemetaan) {
-        //     if (!session('skip_create_jadwal', false)) {
-        //         $pemetaan->updateJadwalRuangan();
-        //     }
-        // });
-
         static::created(function ($pemetaan) {
             // Periksa apakah flag 'skip_create_jadwal' ada di session atau request
-
+            if (!session('skip_create_jadwal', false)) {
                 $pemetaan->createJadwalRuangan();
-
+            }
         });
 
         static::updated(function ($pemetaan) {
-
+            if (!session('skip_create_jadwal', false)) {
                 $pemetaan->updateJadwalRuangan();
-
+            }
         });
+
+        // static::created(function ($pemetaan) {
+        //     // Periksa apakah flag 'skip_create_jadwal' ada di session atau request
+
+        //         $pemetaan->createJadwalRuangan();
+
+        // });
+
+        // static::updated(function ($pemetaan) {
+
+        //         $pemetaan->updateJadwalRuangan();
+
+        // });
     }
 
 

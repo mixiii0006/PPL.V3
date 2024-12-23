@@ -49,7 +49,7 @@ class PemetaanMKController extends Controller
         try {
             // Memanggil fungsi untuk membuat jadwal ruangan setelah validasi sukses
             $pemetaan = Pemetaan::create($validated);
-            $pemetaan->createJadwalRuangan();  // Menambahkan jadwal ruangan ke pemetaan
+            // $pemetaan->createJadwalRuangan();  // Menambahkan jadwal ruangan ke pemetaan
 
         } catch (ValidationException $e) {
             // Menangkap exception dari model dan mengembalikan pesan error ke halaman

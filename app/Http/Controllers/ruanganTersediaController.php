@@ -168,6 +168,8 @@ public function index(Request $request)
         if (!empty($availableSlots)) {
             $availableRooms[] = [
                 'ruangan' => $ruang->nama_ruangan,
+                'id' => $ruang->id,
+                'jenis_ruangan' => $ruang->jenis_ruangan,
                 'slots' => $availableSlots,
             ];
         }
@@ -203,6 +205,66 @@ public function index(Request $request)
         return view('ruangan_tersedia', compact('dosen', 'ruangan', 'day', 'pemetaan', 'matakuliah'));
     }
 
+    // public function store(Request $request)
+    // {
+    //     // Validasi data
+    //     $validated = $request->validate([
+    //         'dosen_id' => 'required|exists:dosens,id',
+    //         'matakuliah_id' => 'required|exists:mata_kuliahs,id',
+    //         'nama_modul' => 'required|string|max:255',
+    //         'hari' => 'required|string|max:10',
+    //         'jam_mulai' => 'required|date_format:H:i',
+    //         'jam_selesai' => 'required|date_format:H:i|after:jam_mulai',
+    //         'tanggal_mulai' => 'required|date',
+    //         'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
+    //         'jenis_ruangan' => 'required|in:RD,RK,Seminar',
+    //         'ruangan_id' => 'required|exists:ruangans,id',
+    //     ]);
+
+    //     // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
+    //     if ($validated['jenis_ruangan'] === 'RD') {
+    //         $validated['jumlah_mahasiswa'] = $request->validate([
+    //             'jumlah_mahasiswa' => 'required|integer|min:1',
+    //         ])['jumlah_mahasiswa'];
+    //     } else {
+    //         // Untuk RK atau Seminar, set jumlah_mahasiswa ke null
+    //         $validated['jumlah_mahasiswa'] = null;
+    //     }
+
+    //     try {
+    //         // Membuat pemetaan
+    //         $pemetaan = Pemetaan::create($validated);
+
+    //         // Cek jika input skip_create_jadwal ada
+    //         if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
+    //             // Menggunakan ruangan_id langsung, tidak perlu mencari ruangan
+    //             $ruangan_id = $request->input('ruangan_id');
+
+    //             // Menghapus jadwal lama jika ada (kombinasi pemetaan_id dan ruangan_id yang sama)
+    //             JadwalRuangan::where('pemetaan_id', $pemetaan->id)
+    //                 ->where('ruangan_id', $ruangan_id)
+    //                 ->delete();
+
+    //             // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
+    //             $jadwal = new JadwalRuangan([
+    //                 'pemetaan_id' => $pemetaan->id,
+    //                 'ruangan_id' => $ruangan_id, // Langsung menggunakan ruangan_id
+    //             ]);
+
+    //             // Simpan jadwal ruangan
+    //             $jadwal->save();
+    //         }
+
+    //     } catch (ValidationException $e) {
+    //         // Menangkap exception dari model dan mengembalikan pesan error
+    //         return redirect()->back()->withErrors($e->errors())->withInput();
+    //     }
+
+    //     // Redirect ke halaman log ruangan dengan pesan sukses
+    //     return redirect()->route('ruangan_tersedia.index')->with('success', 'Jadwal berhasil ditambahkan!');
+    // }
+
+
     public function store(Request $request)
     {
         // Validasi data
@@ -216,7 +278,6 @@ public function index(Request $request)
             'tanggal_mulai' => 'required|date',
             'tanggal_selesai' => 'required|date|after_or_equal:tanggal_mulai',
             'jenis_ruangan' => 'required|in:RD,RK,Seminar',
-            'ruangan_id' => 'required|exists:ruangans,id',
         ]);
 
         // Validasi jumlah_mahasiswa jika jenis ruangan adalah RD
@@ -229,37 +290,36 @@ public function index(Request $request)
             $validated['jumlah_mahasiswa'] = null;
         }
 
-        try {
-            // Membuat pemetaan
-            $pemetaan = Pemetaan::create($validated);
+        // Buat pemetaan baru
+        $pemetaan = Pemetaan::create($validated);
 
-            // Cek jika input skip_create_jadwal ada
-            if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
-                // Menggunakan ruangan_id langsung, tidak perlu mencari ruangan
-                $ruangan_id = $request->input('ruangan_id');
+        if ($request->has('skip_create_jadwal') && $request->input('skip_create_jadwal') == 1) {
+            // Cari ruangan berdasarkan ID
+            $ruangan = Ruangan::findOrFail($request->input('ruangan_id'));
 
-                // Menghapus jadwal lama jika ada (kombinasi pemetaan_id dan ruangan_id yang sama)
-                JadwalRuangan::where('pemetaan_id', $pemetaan->id)
-                    ->where('ruangan_id', $ruangan_id)
-                    ->delete();
+            // Periksa apakah jadwal lama dengan pemetaan_id yang sama dan ruangan_id yang sama sudah ada
+            $existingJadwal = JadwalRuangan::where('pemetaan_id', $pemetaan->id)
+                ->where('ruangan_id', $ruangan->id)
+                ->first();
 
-                // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
-                $jadwal = new JadwalRuangan([
-                    'pemetaan_id' => $pemetaan->id,
-                    'ruangan_id' => $ruangan_id, // Langsung menggunakan ruangan_id
-                ]);
-
-                // Simpan jadwal ruangan
-                $jadwal->save();
+            // Jika ada jadwal lama, hapus
+            if ($existingJadwal) {
+                $existingJadwal->delete();
             }
 
-        } catch (ValidationException $e) {
-            // Menangkap exception dari model dan mengembalikan pesan error
-            return redirect()->back()->withErrors($e->errors())->withInput();
+            // Membuat jadwal baru untuk pemetaan yang baru dibuat dan ruangan yang dipilih
+            $jadwal = new JadwalRuangan([
+                'pemetaan_id' => $pemetaan->id,
+                'ruangan_id' => $ruangan->id,
+            ]);
+
+            // Simpan jadwal ruangan
+            $jadwal->save();
+
+            return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
         }
 
-        // Redirect ke halaman log ruangan dengan pesan sukses
-        return redirect()->route('ruangan_tersedia.index')->with('success', 'Jadwal berhasil ditambahkan!');
+        return redirect()->back()->with('success', 'Jadwal berhasil ditambahkan!');
     }
 
 

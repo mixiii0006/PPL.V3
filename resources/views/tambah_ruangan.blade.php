@@ -58,13 +58,13 @@
                     </svg>
                 </button>
 
-                <button  type="button" id="defaultModalButton"   data-modal-target="defaultModal"data-modal-toggle="defaultModal"
+                {{-- <button  type="button" id="defaultModalButton"   data-modal-target="defaultModal"data-modal-toggle="defaultModal"
                         class="flex items-center justify-center text-blue-500 bg-primary-700 hover:bg-primary-800 focus:ring-4 focus:ring-primary-300 font-medium ml-3 rounded-lg text-sm px-4 py-2 dark:bg-primary-600 dark:hover:bg-primary-700 focus:outline-none dark:focus:ring-primary-800 border border-blue-500">
                         <svg class="h-3.5 w-3.5 mr-2" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
                             <path clip-rule="evenodd" fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" />
                         </svg>
                         Tambah
-                </button>
+                </button> --}}
 
             </div>
         </div>
@@ -303,6 +303,8 @@
                             <div class="grid gap-4">
                                 <div class="grid gap-4 mb-7 sm:grid-cols-1">
                                     <input type="hidden" name="skip_create_jadwal" value="1">
+                                    <input type="hidden" name="ruangan_id" value="{{ $r->id }}">
+                                    <input type="hidden" name="jenis_ruangan" value="{{ $r->jenis_ruangan }}">
                                     <div>
                                         <label for="nama_modul" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Judul Kuliah</label>
                                         <input type="text" name="nama_modul" id="nama_modul" class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-primary-600 focus:border-primary-600 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-primary-500 dark:focus:border-primary-500" value="" required="">
@@ -376,7 +378,7 @@
                                         </div>
                                     </div>
 
-                                    <label for="jenis_ruangan" class="block text-sm font-medium text-gray-900 dark:text-white">Jenis Ruangan</label>
+                                    {{-- <label for="jenis_ruangan" class="block text-sm font-medium text-gray-900 dark:text-white">Jenis Ruangan</label>
                                     <ul class="items-center w-full text-sm font-medium text-gray-900 bg-white border border-gray-200 rounded-lg sm:flex dark:bg-gray-700 dark:border-gray-600 dark:text-white">
                                         <li class="w-full border-b border-gray-200 sm:border-b-0 sm:border-r dark:border-gray-600">
                                             <div class="flex items-center ps-3">
@@ -396,7 +398,7 @@
                                                 <label for="jenis_ruangan_seminar" class="w-full py-3 ms-2 text-sm font-medium text-gray-900 dark:text-gray-300">Ruang Seminar</label>
                                             </div>
                                         </li>
-                                    </ul>
+                                    </ul> --}}
 
                                     <div >
                                         <label for="jumlah_mahasiswa" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Jumlah Mahasiswa</label>
@@ -520,7 +522,7 @@
         </script> --}}
 
 
-        <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
+        {{-- <div id="defaultModal" tabindex="-1" aria-hidden="true" class="hidden bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
             <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
                 <!-- Modal content -->
                 <div class="relative p-4 bg-white rounded-lg shadow dark:bg-gray-800 sm:p-5">
@@ -661,7 +663,7 @@
                     </form>
                 </div>
             </div>
-        </div>
+        </div> --}}
 
         <div id="defaultModal3" tabindex="-1" aria-hidden="true" class="hidden bg-gray-500 bg-opacity-25  overflow-y-auto overflow-x-hidden fixed top-0 right-0 left-0 z-50 justify-center items-center w-full md:inset-0 h-modal md:h-full">
             <div class="relative p-4 w-full max-w-2xl h-full md:h-auto">
